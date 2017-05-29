@@ -75,10 +75,10 @@ function get_external_data( URL, d ){
   }
 }
 
-var get_all_external_soruces = function( input_URL ){
+var get_all_external_soruces = function( ){
   var acc = __accession;
   var key = __alignment.pdb+":"+__alignment.chain;
-  listURL = input_URL;
+  listURL = allURL;
   if(imported_flag)key += ":"+acc
   if( $EXTERNAL_DATA && key in $EXTERNAL_DATA['PDBchain'] ){
     __external_data = $EXTERNAL_DATA['PDBchain'][ key ];
