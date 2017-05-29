@@ -874,9 +874,14 @@ module.exports = extend_categories;
 
 var listURL;
 var $EXTERNAL_DATA = null;
-var local_imported_flag = null;
-var local_accession = null;
-var local_alignment =  null;
+
+if(top.$EXTERNAL_DATA && !imported_flag){
+  $EXTERNAL_DATA = top.$EXTERNAL_DATA;
+}else if(top.$IMPORTED_DATA && imported_flag){
+  $EXTERNAL_DATA = top.$IMPORTED_DATA;
+}else{
+  $EXTERNAL_DATA = {'PDBchain':{},'acc':{}};
+}
 
 function wait_message(message){
     if($j(".jsonp_info").length){
@@ -897,15 +902,15 @@ function get_external_data( URL, d ){
   var key = query[0];
   var save_flag = query[2];
   wait_message( "COLLECTING <span style=\"color:black\">"+key.toUpperCase()+"</span> "+(listURL.length-URL.length)+" / "+listURL.length );
-  if( $EXTERNAL_DATA && key in $EXTERNAL_DATA['acc'] && local_alignment.uniprot in $EXTERNAL_DATA['acc'][key] ){
-    d[key] = $EXTERNAL_DATA['acc'][key][local_alignment.uniprot];
+  if( $EXTERNAL_DATA && key in $EXTERNAL_DATA['acc'] && __alignment.uniprot in $EXTERNAL_DATA['acc'][key] ){
+    d[key] = $EXTERNAL_DATA['acc'][key][__alignment.uniprot];
     if(URL.length > 0){
       get_external_data( URL, d );
       return;
     }else{
       clear_wm();
-      var key = local_alignment.pdb+":"+local_alignment.chain;
-      if(local_imported_flag)key += ":"+local_accession;
+      var key = __alignment.pdb+":"+__alignment.chain;
+      if(imported_flag)key += ":"+__accession;
       $EXTERNAL_DATA['PDBchain'][ key ] = d;
       build_ProtVista();
       return;
@@ -919,7 +924,7 @@ function get_external_data( URL, d ){
         d[key] = data;
         if( save_flag ){
           if(!$EXTERNAL_DATA['acc'][key])$EXTERNAL_DATA['acc'][key] = {};
-          $EXTERNAL_DATA['acc'][key][local_alignment.uniprot] = data;
+          $EXTERNAL_DATA['acc'][key][__alignment.uniprot] = data;
         }
       },
       error: function(e){
@@ -932,8 +937,8 @@ function get_external_data( URL, d ){
         return;
       }else{
         clear_wm();
-        var key = local_alignment.pdb+":"+local_alignment.chain;
-        if(local_imported_flag)key += ":"+local_accession;
+        var key = __alignment.pdb+":"+__alignment.chain;
+        if(imported_flag)key += ":"+__accession;
         $EXTERNAL_DATA['PDBchain'][ key ] = d;
         build_ProtVista();
         return;
@@ -942,31 +947,18 @@ function get_external_data( URL, d ){
   }
 }
 
-var get_all_external_soruces = function( accession, alignment, input_URL, external_data, imported_flag ){
-  local_accession = accession;
-  local_imported_flag = imported_flag;
-  local_alignment = alignment;
-
-  var acc = local_accession;
-  var key = local_alignment.pdb+":"+local_alignment.chain;
-
-  if(top.$EXTERNAL_DATA && !local_imported_flag){
-    $EXTERNAL_DATA = top.$EXTERNAL_DATA;
-  }else if(top.$IMPORTED_DATA && local_imported_flag){
-    $EXTERNAL_DATA = top.$IMPORTED_DATA;
-  }else{
-    $EXTERNAL_DATA = {'PDBchain':{},'acc':{}};
-  }
-
+var get_all_external_soruces = function( input_URL ){
+  var acc = __accession;
+  var key = __alignment.pdb+":"+__alignment.chain;
   listURL = input_URL;
-  if(local_imported_flag)key += ":"+acc
+  if(imported_flag)key += ":"+acc
   if( $EXTERNAL_DATA && key in $EXTERNAL_DATA['PDBchain'] ){
-    external_data = $EXTERNAL_DATA['PDBchain'][ key ];
+    __external_data = $EXTERNAL_DATA['PDBchain'][ key ];
     clear_wm();
     build_ProtVista();
   }else{
     var __allURL = listURL.slice(0);
-    get_external_data(__allURL, external_data);
+    get_external_data(__allURL, __external_data);
   }
 };
 
