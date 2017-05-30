@@ -149,3 +149,7 @@ svg .up_pftv_interacting_residues {
 .up_pftv_tooltip-container div table{
   border:0px solid #CCC;
 }
+
+.up_pftv_icon-button:hover{
+  cursor:pointer;
+}
