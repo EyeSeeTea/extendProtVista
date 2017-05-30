@@ -18,6 +18,7 @@ var add_smart = require('./add_smart');
 var add_pfam = require('./add_pfam');
 var add_elmdb = require('./add_elmdb');
 var add_coverage = require('./add_coverage');
+var add_sequence_coverage = require('./add_sequence_coverage');
 var add_dsysmap = require('./add_dsysmap');
 var add_biomuta = require('./add_biomuta');
 var rename_structural_features = require('./rename_structural_features');
@@ -46,6 +47,7 @@ var extend_features =  function(features){
 	add_mobi(features);
 	add_elmdb(features);
 	add_coverage(features);
+        add_sequence_coverage(features);
 	add_phosphosite(features);
 	add_dbptm(features);
 	rebuild_ptm(features);
