@@ -18,8 +18,7 @@ var continuous_data = function (d){
     });
     d.forEach(function(i){
       var x = parseFloat(i.value);
-      var y = (x-min)/(max-min);
-      var r = parseInt( 255*y );
+      var r = parseInt( 255*(x-min)/(max-min) );
       if(r>255)r=255;
       var b = 255-r;
       if(b<0)b = 0;
