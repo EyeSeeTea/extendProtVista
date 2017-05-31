@@ -840,22 +840,31 @@ module.exports = { variant_menu:variant_menu, update_diseases:update_diseases, a
 },{}],18:[function(require,module,exports){
 "use strict";
 
+var n = 1;
 var continuous_data = function (d){
     var out = [];
-    var n = 1;
     for(var i = 0;i<__alignment.uniprotLength+1;i++){
       var __f = { type: "VARIANT", pos: i, variants: [] };
       out.push(__f);
       n++;     
     }
     var n = 0;
+    var max = -1000000000;
+    var min = 1000000000;
     d.forEach(function(i){
-      var r = i.value;
+      var x = parseFloat(i.value);
+      if(x>max)max=x;
+      if(x<min)min=x;
+    });
+    d.forEach(function(i){
+      var x = parseFloat(i.value);
+      var y = (x-min)/(max-min);
+      var r = parseInt( 255*y );
       if(r>255)r=255;
       var b = 255-r;
       if(b<0)b = 0;
       var color = 'rgb('+r+',0,'+b+')';
-      out[ i.begin ].variants = [{color:color, alternativeSequence:'', type:'measure', begin: i.begin, end:i.begin, score:i.value, internalId:'test_'+n, description:'' }];
+      out[ i.begin ].variants = [{color:color, alternativeSequence:'', type:'measure', begin: i.begin, end:i.begin, score:i.value, internalId:'measure_'+n, description:'' }];
       n++;
     });
     return out;
