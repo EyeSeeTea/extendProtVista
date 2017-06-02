@@ -117,9 +117,9 @@ function __tooltip_yoverflow(){
         var x = h;
         h += $j(".up_pftv_tooltip-container").parent().offset().top;
         h += $j(".up_pftv_tooltip-container").height();
-        var  d = h - $j(window).scrollTop() - $j(window).height() +150;
+        var  d = h - $j(window).scrollTop() - $j(window).height() +200;
+        console.log(d+"  <<<<");
         if(d>0){
-          d += 10;
           x -= d;
           $j(".up_pftv_tooltip-container").css('top',x.toString()+'px');
         }
