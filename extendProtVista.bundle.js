@@ -1017,6 +1017,9 @@ var setup_highlight  =  function(fv){
 				jQuery("[name=fake_0]").get(0).dispatchEvent(fake_click);
 			}
 		}
+                if(!e['begin'] || !e['end']){
+                  return;
+                }
 		fv.data.forEach(function(i){
 			if(i[0]=="__fake"){
 				i[1][0]['begin']=e['begin'];
