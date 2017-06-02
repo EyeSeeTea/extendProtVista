@@ -23,7 +23,7 @@ var continuous_data = function (d){
       var b = 255-r;
       if(b<0)b = 0;
       var color = 'rgb('+r+',0,'+b+')';
-      out[ i.begin ].variants = [{color:color, alternativeSequence:'', type:'measure', begin: i.begin, end:i.begin, score:i.value, internalId:'measure_'+n, description:'' }];
+      if(out[ i.begin ])out[ i.begin ].variants = [{color:color, alternativeSequence:'', type:'measure', begin: i.begin, end:i.begin, score:i.value, internalId:'measure_'+n, description:'' }];
       n++;
     });
     return out;
