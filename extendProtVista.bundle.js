@@ -382,6 +382,8 @@ var uniprot_link = {
   'CHAIN':'peptides_section',
   'CARBOHYD':'aaMod_section',
   'DISULFID':'aaMod_section',
+  'MOD_RES':'aaMod_section',
+  'CROSSLNK':'aaMod_section',
   'CONFLICT':'Sequence_conflict_section'
 };
 

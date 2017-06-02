@@ -6,10 +6,15 @@ var uniprot_link = {
   'DOMAIN':'domainsAnno_section',
   'REGION':'Region_section',
   'BINDING':'sitesAnno_section',
+  'PROPEP':'peptides_section',
   'CHAIN':'peptides_section',
   'CARBOHYD':'aaMod_section',
   'DISULFID':'aaMod_section',
-  'CONFLICT':'Sequence_conflict_section'
+  'MOD_RES':'aaMod_section',
+  'CROSSLNK':'aaMod_section',
+  'LIPID':'aaMod_section',
+  'CONFLICT':'Sequence_conflict_section',
+  'NP_BIND':'regionAnno_section'
 };
 
 var add_evidences = function(d){
