@@ -105,24 +105,46 @@ function __add_tooltip_yoverflow(){
 	}
 }
 
+var __tooltip_lock = true;
 function __tooltip_yoverflow(){
 	var __e = document.getElementsByClassName("up_pftv_tooltip-container");
 	if( __e && __e[0]){
 		var __left = parseInt(__e[0].style.left.substring(0, __e[0].style.left.length - 2));
 		if(__left > 300)__e[0].style.left = 300;
-	}
+	}else{
+          return;
+        }
         var h = $j(".up_pftv_tooltip-container").css('top');
         if(typeof h == "undefined")return;
-        h = parseInt(h.substring(0, h.length - 2));
-        var x = h;
-        h += $j(".up_pftv_tooltip-container").parent().offset().top;
-        h += $j(".up_pftv_tooltip-container").height();
-        var  d = h - $j(window).scrollTop() - $j(window).height() +200;
-        console.log(d+"  <<<<");
-        if(d>0){
-          x -= d;
-          $j(".up_pftv_tooltip-container").css('top',x.toString()+'px');
+
+        h = parseInt(h);
+        if(h<0)return;
+
+        var scroll_x = parseInt($j(window).scrollTop());
+
+        var screen_height = parseInt( document.body.clientHeight );
+
+        var screen_x = scroll_x + screen_height;
+
+        var feature_x  = parseInt( $j("[name="+instance.selectedFeature.internalId+"]").parent().offset().top );
+
+        var dx = screen_x - feature_x;
+
+        var tooltip_height = parseInt($j(".up_pftv_tooltip-container").height())+60;
+
+        var delta = parseInt( tooltip_height-dx  );
+
+        if(delta > 0 && __tooltip_lock){
+          __tooltip_lock = false;
+          setTimeout(function(){ set_tooltip_offset(delta); }, 10);
         }
+}
+
+function set_tooltip_offset(delta){
+          var h = parseInt( $j(".up_pftv_tooltip-container").offset().top );
+          h -= parseInt(delta);
+          $j(".up_pftv_tooltip-container").offset({top:h})
+          __tooltip_lock = true;
 }
 
 module.exports = {add_highlight:add_highlight, setup_highlight:setup_highlight};
