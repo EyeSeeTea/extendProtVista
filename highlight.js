@@ -101,18 +101,11 @@ var check_coordinates = function(){
   var top_css = parseFloat($j(".up_pftv_tooltip-container").css('top'));
   var tooltip_x = frame_x + top_css + tooltip_height;
 
-  console.log("tooltip_height "+tooltip_height);
-  console.log("tooltip_x "+tooltip_x);
-
   var scroll_x = parseFloat( $j(window).scrollTop() );
-  console.log("scroll_x "+scroll_x);
   var screen_height = parseFloat( document.body.clientHeight );
-  console.log("screen_height "+screen_height);
   var screen_x = scroll_x + screen_height;
-  console.log("screen_x "+screen_x);
 
   var delta = tooltip_x - screen_x;
-  console.log("delta "+delta);
   if( delta > 0 ){
     top_css -= delta;
     $j(".up_pftv_tooltip-container").css('top', top_css+'px');
