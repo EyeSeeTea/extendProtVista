@@ -1038,7 +1038,6 @@ var setup_highlight  =  function(fv){
 
 	fv.getDispatcher().on("ready", function(o) {
 		__hide_fake();
-		__add_tooltip_yoverflow();
                 $j(".up_pftv_icon-reset").click(function(){
                   trigger_aa_cleared();
                 });
@@ -1087,62 +1086,36 @@ function __hide_eye(a,b,c) {
 	if( found != undefined ) found.parentNode.style.display = "none";
 }
 
-function __add_tooltip_yoverflow(){
-	var classDOM = document.getElementsByClassName("up_pftv_category-viewer");
-	var observer = new MutationObserver(__tooltip_yoverflow);
-	for(var i=0;i<classDOM.length;i++){
-		observer.observe(classDOM[i],{childList:true});
-	}
-	var classDOM = document.getElementsByClassName("up_pftv_track");
-	var observer = new MutationObserver(__tooltip_yoverflow);
-	for(var i=0;i<classDOM.length;i++){
-		observer.observe(classDOM[i],{childList:true});
-	}
+var check_coordinates = function(){
+
+  var left_css = parseFloat($j(".up_pftv_tooltip-container").css('left'));
+  if (left_css > 300)$j(".up_pftv_tooltip-container").css('left','300px');
+  
+  var tooltip_height = parseFloat($j(".up_pftv_tooltip-container").height())+6+2;
+  var frame_x  = parseFloat( $j(".up_pftv_tooltip-container").parent().offset().top );
+  var top_css = parseFloat($j(".up_pftv_tooltip-container").css('top'));
+  var tooltip_x = frame_x + top_css + tooltip_height;
+
+  console.log("tooltip_height "+tooltip_height);
+  console.log("tooltip_x "+tooltip_x);
+
+  var scroll_x = parseFloat( $j(window).scrollTop() );
+  console.log("scroll_x "+scroll_x);
+  var screen_height = parseFloat( document.body.clientHeight );
+  console.log("screen_height "+screen_height);
+  var screen_x = scroll_x + screen_height;
+  console.log("screen_x "+screen_x);
+
+  var delta = tooltip_x - screen_x;
+  console.log("delta "+delta);
+  if( delta > 0 ){
+    top_css -= delta;
+    $j(".up_pftv_tooltip-container").css('top', top_css+'px');
+  }
+
 }
 
-var __tooltip_lock = true;
-function __tooltip_yoverflow(){
-	var __e = document.getElementsByClassName("up_pftv_tooltip-container");
-	if( __e && __e[0]){
-		var __left = parseInt(__e[0].style.left.substring(0, __e[0].style.left.length - 2));
-		if(__left > 300)__e[0].style.left = 300;
-	}else{
-          return;
-        }
-        var h = $j(".up_pftv_tooltip-container").css('top');
-        if(typeof h == "undefined")return;
-
-        h = parseInt(h);
-        if(h<0)return;
-
-        var scroll_x = parseInt($j(window).scrollTop());
-
-        var screen_height = parseInt( document.body.clientHeight );
-
-        var screen_x = scroll_x + screen_height;
-
-        var feature_x  = parseInt( $j("[name="+instance.selectedFeature.internalId+"]").parent().offset().top );
-
-        var dx = screen_x - feature_x;
-
-        var tooltip_height = parseInt($j(".up_pftv_tooltip-container").height())+60;
-
-        var delta = parseInt( tooltip_height-dx  );
-
-        if(delta > 0 && __tooltip_lock){
-          __tooltip_lock = false;
-          setTimeout(function(){ set_tooltip_offset(delta); }, 10);
-        }
-}
-
-function set_tooltip_offset(delta){
-          var h = parseInt( $j(".up_pftv_tooltip-container").offset().top );
-          h -= parseInt(delta);
-          $j(".up_pftv_tooltip-container").offset({top:h})
-          __tooltip_lock = true;
-}
-
-module.exports = {add_highlight:add_highlight, setup_highlight:setup_highlight};
+module.exports = {add_highlight:add_highlight, setup_highlight:setup_highlight, check_coordinates:check_coordinates};
 
 },{}],22:[function(require,module,exports){
 "use strict";
@@ -1241,6 +1214,7 @@ var add_dbptm = require('./add_dbptm');
 var highlight = require('./highlight');
 var add_highlight = highlight.add_highlight;
 var setup_highlight = highlight.setup_highlight;
+var check_coordinates = highlight.check_coordinates;
 
 var upgrade_fv = function(fv){
 	max_zoom(fv);
@@ -1283,7 +1257,8 @@ module.exports = {
                    update_diseases:update_diseases,
                    extend_categories:extend_categories,
                    add_disease_menu:add_disease_menu,
-                   uploaded_data:uploaded_data
+                   uploaded_data:uploaded_data,
+                   check_coordinates:check_coordinates
 };
 
 },{"./add_asa_residues":1,"./add_binding_residues":2,"./add_biomuta":3,"./add_coverage":4,"./add_dbptm":5,"./add_dsysmap":6,"./add_elmdb":7,"./add_evidences":8,"./add_iedb":9,"./add_interpro":10,"./add_mobi":11,"./add_pfam":12,"./add_phosphosite":13,"./add_sequence_coverage":14,"./add_smart":15,"./add_uploaded_data":16,"./build_variant_menu":17,"./extend_categories":19,"./get_all_external_soruces":20,"./highlight":21,"./max_zoom":22,"./rebuild_ptm":23,"./rename_structural_features":24}]},{},[]);

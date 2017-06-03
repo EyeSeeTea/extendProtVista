@@ -15,3 +15,4 @@ var update_diseases = extendProtVista.update_diseases;
 var extend_categories = extendProtVista.extend_categories;
 var add_disease_menu = extendProtVista.add_disease_menu;
 var uploaded_data = extendProtVista.uploaded_data;
+var check_coordinates = extendProtVista.check_coordinates;

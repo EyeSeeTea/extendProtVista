@@ -30,6 +30,7 @@ var add_dbptm = require('./add_dbptm');
 var highlight = require('./highlight');
 var add_highlight = highlight.add_highlight;
 var setup_highlight = highlight.setup_highlight;
+var check_coordinates = highlight.check_coordinates;
 
 var upgrade_fv = function(fv){
 	max_zoom(fv);
@@ -72,5 +73,6 @@ module.exports = {
                    update_diseases:update_diseases,
                    extend_categories:extend_categories,
                    add_disease_menu:add_disease_menu,
-                   uploaded_data:uploaded_data
+                   uploaded_data:uploaded_data,
+                   check_coordinates:check_coordinates
 };
