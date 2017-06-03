@@ -14,7 +14,8 @@ var uniprot_link = {
   'CROSSLNK':'aaMod_section',
   'LIPID':'aaMod_section',
   'CONFLICT':'Sequence_conflict_section',
-  'NP_BIND':'regionAnno_section'
+  'NP_BIND':'regionAnno_section',
+  'MOTIF':'Motif_section'
 };
 
 var add_evidences = function(d){
