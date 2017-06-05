@@ -2,7 +2,7 @@ require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof requ
 "use strict";
 
 var add_asa_residues = function (d){
-  if( top.asa_residues ){
+  if( !imported_flag && top.asa_residues ){
     var n_model = top.n_model_main_frame-1;
     var asa_res = ["RESIDUE_ASA",[]]; 
     var n = 1;
@@ -54,7 +54,7 @@ module.exports = add_asa_residues;
 "use strict";
 
 var add_binding_residues = function(d){
-  if( top.binding_residues && top.binding_residues[0] > 0 ){
+  if( !imported_flag && top.binding_residues && top.binding_residues[0] > 0 ){
     var n_model = top.n_model_main_frame;
     var  b_res = ["INTERACTING_RESIDUES",[]]; 
     var n = 1;
@@ -514,6 +514,7 @@ var add_pfam = function(d){
 
 		__external_data['Pfam'].forEach(function(i){
 			var __description = '<b>'+i['info']['description']+'</b>';
+                        __description += '<br/><b style="color:grey;">Family</b>: '+i['acc']
 			var __ext = '';
 			for(var k in i['info']['go']){
 				__ext += '<b style="color:grey;">'+k[0].toUpperCase() + k.slice(1)+'</b>: ';

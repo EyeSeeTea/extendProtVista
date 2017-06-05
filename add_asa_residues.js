@@ -1,7 +1,7 @@
 "use strict";
 
 var add_asa_residues = function (d){
-  if( top.asa_residues ){
+  if( !imported_flag && top.asa_residues ){
     var n_model = top.n_model_main_frame-1;
     var asa_res = ["RESIDUE_ASA",[]]; 
     var n = 1;

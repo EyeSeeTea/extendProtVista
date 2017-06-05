@@ -1,7 +1,7 @@
 "use strict";
 
 var add_binding_residues = function(d){
-  if( top.binding_residues && top.binding_residues[0] > 0 ){
+  if( !imported_flag && top.binding_residues && top.binding_residues[0] > 0 ){
     var n_model = top.n_model_main_frame;
     var  b_res = ["INTERACTING_RESIDUES",[]]; 
     var n = 1;

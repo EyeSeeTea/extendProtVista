@@ -7,6 +7,7 @@ var add_pfam = function(d){
 
 		__external_data['Pfam'].forEach(function(i){
 			var __description = '<b>'+i['info']['description']+'</b>';
+                        __description += '<br/><b style="color:grey;">Family</b>: '+i['acc']
 			var __ext = '';
 			for(var k in i['info']['go']){
 				__ext += '<b style="color:grey;">'+k[0].toUpperCase() + k.slice(1)+'</b>: ';
