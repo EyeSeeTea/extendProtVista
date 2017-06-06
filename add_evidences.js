@@ -15,7 +15,8 @@ var uniprot_link = {
   'LIPID':'aaMod_section',
   'CONFLICT':'Sequence_conflict_section',
   'NP_BIND':'regionAnno_section',
-  'MOTIF':'Motif_section'
+  'MOTIF':'Motif_section',
+  'REPEAT':'domainsAnno_section'
 };
 
 var add_evidences = function(d){
