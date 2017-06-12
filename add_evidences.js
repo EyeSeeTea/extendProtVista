@@ -16,7 +16,8 @@ var uniprot_link = {
   'CONFLICT':'Sequence_conflict_section',
   'NP_BIND':'regionAnno_section',
   'MOTIF':'Motif_section',
-  'REPEAT':'domainsAnno_section'
+  'REPEAT':'domainsAnno_section',
+  'METAL':'sitesAnno_section'
 };
 
 var add_evidences = function(d){
