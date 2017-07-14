@@ -15,7 +15,7 @@ var add_asa_residues = function (d){
     if(top.asa_residues[n_model][chain]){
       var n = 0;
       top.asa_residues[n_model][chain].forEach(function(i){
-        var r = parseInt(255/120*i[1]);
+        var r = parseInt(255*i[1]);
         if(r>255)r=255;
         var b = 255-r;
         if(b<0)b = 0;
@@ -27,7 +27,7 @@ var add_asa_residues = function (d){
                                                    end: i[0], 
                                                    score:i[1], 
                                                    internalId:'asa_'+n, 
-                                                   description:'<b style=\"color:grey;\">Accessible surface area</b><br/>Residue accesibility '+i[1]+'&#197<sup>2</sup>' 
+                                                   description:'<b style=\"color:grey;\">Relative accessible surface area</b><br/>Residue accesibility '+parseFloat(i[1]*100).toFixed(2)+'%'
         }];
         n++;
       });
