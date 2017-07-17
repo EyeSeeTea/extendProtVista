@@ -390,7 +390,8 @@ var uniprot_link = {
   'NP_BIND':'regionAnno_section',
   'MOTIF':'Motif_section',
   'REPEAT':'domainsAnno_section',
-  'METAL':'sitesAnno_section'
+  'METAL':'sitesAnno_section',
+  'DNA_BIND':'regionAnno_section'
 };
 
 var add_evidences = function(d){
