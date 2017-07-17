@@ -18,7 +18,8 @@ var uniprot_link = {
   'MOTIF':'Motif_section',
   'REPEAT':'domainsAnno_section',
   'METAL':'sitesAnno_section',
-  'DNA_BIND':'regionAnno_section'
+  'DNA_BIND':'regionAnno_section',
+  'SITE':'Site_section'
 };
 
 var add_evidences = function(d){
