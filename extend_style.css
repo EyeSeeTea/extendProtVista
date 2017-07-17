@@ -84,6 +84,11 @@ svg .up_pftv_predictors {
 	fill: #FFCC66;
 }
 
+svg .up_pftv_long {
+	stroke: #CCFF66;
+	fill: #CCFF66;
+}
+
 svg .up_pftv_interacting_residues {
 	stroke: #006699;
 	fill: #006699;
