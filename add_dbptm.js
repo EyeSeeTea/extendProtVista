@@ -27,6 +27,7 @@ var add_dbptm  =  function(d){
 						( i_t.indexOf("ubiquit")>-1 && j_t.indexOf("ubiquit")>-1 ) ||
 						( i_t.indexOf("acetyl")>-1 && j_t.indexOf("acetyl")>-1 ) ||
                                                 ( i_t.indexOf("glyco")>-1 && j_t.indexOf("glcnac")>-1 ) ||
+                                                ( i_t.indexOf("sumo")>-1 && j_t.indexOf("sumo")>-1 )||
 						( (i_t.indexOf("prenyl")>-1 || i_t.indexOf("farnesyl")>-1) && (j_t.indexOf("prenyl")>-1 || j_t.indexOf("farnesyl")>-1) )
 					){
 						__flag = j;

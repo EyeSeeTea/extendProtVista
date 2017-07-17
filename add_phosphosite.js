@@ -26,15 +26,27 @@ var add_phosphosite = function(d){
 					if( __r[1] && __r[1].length>1 )__description += "<b style=\"color:grey;\">"+ __r[0]+"</b>: "+__r[1].replace("("," (")+". <br>";
 				});
 				__description.substring(0, __description.length - 4);
-				var __label = 'site';
+				var __label = 'SITE';
 				if(i['subtype'] == "Sustrate-Kinase interaction"){
 					__label = 'BINDING';
 				}
-				__sites[1].push({begin:i['start'],end:i['end'],description:__description,internalId:'ppsp_'+n,type:__label,evidences:
+
+                                var __aux = jQuery.grep(__sites[1],function(e){ return (e.begin == i['start'] && e.end == i['end']); });
+                                if( __aux.length > 0 ){
+                                  __aux[0]['description'] += "<hr/>"+__description;
+                                  var __evd = jQuery.grep(__aux[0]['evidences']["Imported information"],function(e){return (e["name"].indexOf("PhosphoSitePlus")!=-1);});
+                                  if(__evd.length == 0){
+                                    __aux[0]['evidences']["Imported information"].push({
+						url:'http://www.phosphosite.org/uniprotAccAction.do?id='+__accession,id:__accession,name:'Imported from PhosphoSitePlus'
+				    });
+                                  }
+                                }else{
+				  __sites[1].push({begin:i['start'],end:i['end'],description:__description,internalId:'ppsp_'+n,type:__label,evidences:
 					{
 						"Imported information":[{url:'http://www.phosphosite.org/uniprotAccAction.do?id='+__accession,id:__accession,name:'Imported from PhosphoSitePlus'}]
 					}
-				});
+				  });
+                                }
 				n++;
 			}else{
 				var __aux = jQuery.grep(__ptm[1],function(e){ return (e.begin == i['start'] && e.end == i['end']); });
@@ -53,6 +65,7 @@ var add_phosphosite = function(d){
 						    (i_t.indexOf("ubiquit")>-1 && j_t.indexOf("ubiquit")>-1)||
 						    (i_t.indexOf("acetyl")>-1 && j_t.indexOf("acetyl")>-1)||
                                                     (i_t.indexOf("glyco")>-1 && j_t.indexOf("glcnac")>-1)||
+                                                    (i_t.indexOf("sumo")>-1 && j_t.indexOf("sumo")>-1)||
 						    ((i_t.indexOf("prenyl")>-1 || i_t.indexOf("farnesyl")>-1) && (j_t.indexOf("prenyl")>-1 || j_t.indexOf("farnesyl")>-1))
 
                                                   ){
