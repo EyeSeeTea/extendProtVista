@@ -20,19 +20,21 @@ var uniprot_link = {
   'METAL':'sitesAnno_section',
   'DNA_BIND':'regionAnno_section',
   'SITE':'Site_section',
-  'SIGNAL':'sitesAnno_section'
+  'SIGNAL':'sitesAnno_section',
+  'ACT_SITE':'sitesAnno_section'
 };
 
 var add_evidences = function(d){
   d.forEach(function(i){
     i[1].forEach(function(j){
       if( !('evidences' in j) ){
+        //console.log( j['type']+"=>"+uniprot_link[ j['type'] ]);
         j['evidences'] =  {"Imported information":[{url:'http://www.uniprot.org/uniprot/'+__accession+'#'+uniprot_link[ j['type'] ],id:__accession,name:'Imported from UniProt'}]};
       }else{
         for(var k in j['evidences']){
           j['evidences'][k].forEach(function(l){
+             //console.log( j['type']+"=>"+uniprot_link[ j['type'] ]);
              if( l == undefined ){
-               console.log(j['type']);
                j['evidences'][k] = [{url:'http://www.uniprot.org/uniprot/'+__accession+'#'+uniprot_link[ j['type'] ],id:__accession,name:'Imported from UniProt'}];
              }
           });
