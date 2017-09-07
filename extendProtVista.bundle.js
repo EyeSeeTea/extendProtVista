@@ -580,7 +580,19 @@ var add_phosphosite = function(d){
                                 var __aux = jQuery.grep(__sites[1],function(e){ return (e.begin == i['start'] && e.end == i['end']); });
                                 if( __aux.length > 0 ){
                                   __aux[0]['description'] += "<hr/>"+__description;
-                                  var __evd = jQuery.grep(__aux[0]['evidences']["Imported information"],function(e){return (e["name"].indexOf("PhosphoSitePlus")!=-1);});
+                                  var __evd = [];
+                                  try{
+                                    var import_inf = __aux[0]['evidences']['Imported information'];
+                                    __evd = jQuery.grep(import_inf,function(e){return (e["name"].indexOf("PhosphoSitePlus")!=-1);});
+                                  }catch(err){
+                                    if(!'evidences' in __aux[0]){
+                                      __aux[0]['evidences'] = {};
+                                      __aux[0]['evidences']['Imported information']=[];
+                                    }else{
+                                      __aux[0]['evidences']['Imported information']=[];
+                                    }
+                                    console.log(err);
+                                  }
                                   if(__evd.length == 0){
                                     __aux[0]['evidences']["Imported information"].push({
 						url:'http://www.phosphosite.org/uniprotAccAction.do?id='+__accession,id:__accession,name:'Imported from PhosphoSitePlus'
