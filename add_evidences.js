@@ -19,7 +19,8 @@ var uniprot_link = {
   'REPEAT':'domainsAnno_section',
   'METAL':'sitesAnno_section',
   'DNA_BIND':'regionAnno_section',
-  'SITE':'Site_section'
+  'SITE':'Site_section',
+  'SIGNAL':'sitesAnno_section'
 };
 
 var add_evidences = function(d){
