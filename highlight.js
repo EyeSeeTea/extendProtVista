@@ -14,14 +14,6 @@ var setup_highlight  =  function(fv){
         fv.ready_flag = true;
 
 	fv.__highlight = function(e){
-		var fake_click = new MouseEvent("click");
-		if (fv.selectedFeature && fv.selectedFeature.internalId == "fake_0"){
-			if( document.getElementsByName("fake_0").lentgh>0){
-				document.getElementsByName("fake_0")[0].dispatchEvent(fake_click);
-			}else if( jQuery("[name=fake_0]").get(0) ){
-				jQuery("[name=fake_0]").get(0).dispatchEvent(fake_click);
-			}
-		}
                 if(!e['begin'] || !e['end']){
                   return;
                 }
@@ -31,21 +23,33 @@ var setup_highlight  =  function(fv){
 				i[1][0]['end']=e['end'];
 			}
 		});
+
+		var fake_click = new MouseEvent("click");
+		if (fv.selectedFeature && fv.selectedFeature.internalId == "fake_0"){
+			if( document.getElementsByName("fake_0").lentgh>0){
+			  document.getElementsByName("fake_0")[0].dispatchEvent(fake_click);
+			}else if( $j("[name=fake_0]").get(0) ){
+			  $j("[name=fake_0]").get(0).dispatchEvent(fake_click);
+			}
+		}
+
 		if( document.getElementsByName("fake_0").lentgh>0){
 			document.getElementsByName("fake_0")[0].dispatchEvent(fake_click);
                         document.getElementsByName("fake_0")[0].style.fill = e['color'];
-		}else if( jQuery("[name=fake_0]").get(0) ){
+		}else if( $j("[name=fake_0]").get(0) ){
                         $j("[name=fake_0]").css("fill",e['color']);
 			$j("[name=fake_0]").get(0).dispatchEvent(fake_click);
 		}
+                //instance.highlightRegion(e['begin'],e['end'])
 
 	}
 
 	fv.getDispatcher().on("ready", function(o) {
 		__hide_fake();
-                $j(".up_pftv_icon-reset").click(function(){
+                /*$j(".up_pftv_icon-reset").click(function(){
+                  console.log(".up_pftv_icon-reset.click");
                   trigger_aa_cleared();
-                });
+                });*/
                 fv.data.forEach(function(i){
                   if(i[0]=="INTERACTING_RESIDUES"){
                     IRD = i[1];
