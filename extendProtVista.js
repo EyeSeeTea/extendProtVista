@@ -32,6 +32,7 @@ var add_highlight = highlight.add_highlight;
 var setup_highlight = highlight.setup_highlight;
 var check_coordinates = highlight.check_coordinates;
 
+
 var upgrade_fv = function(fv){
 	max_zoom(fv);
 	setup_highlight(fv);

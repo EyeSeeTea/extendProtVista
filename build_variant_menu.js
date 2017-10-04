@@ -31,8 +31,8 @@ var variant_menu = function (){
       $j(".up_pftv_diseases").css("display","none");
     }
   });
-  $j('.up_pftv_track-header').css('position','relative')
-  $j('.up_pftv_track-header').append("<div class=\"up_pftv_diseases\"><h4>Diseases</h4><div></div></div>");
+  $j(".up_pftv_category_VARIATION .up_pftv_track-header").css('position','relative')
+  $j(".up_pftv_category_VARIATION .up_pftv_track-header").append("<div class=\"up_pftv_diseases\"><h4>Diseases</h4><div></div></div>");
   Object.keys(diseases_table).sort().forEach(function(k){
     if(k!="none")$j('.up_pftv_diseases div').append("<span class=\"disease_item unactive_disease\" title=\""+k+"\">&#9675; "+k+"</span><br/>");
   });

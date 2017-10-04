@@ -1,4 +1,6 @@
 "use strict";
+var highlight_all = require('./highlight_all');
+var add_highlight_all = highlight_all.add_highlight_all;
 
 var add_highlight = function(d){
 	var __fake= ['__fake',[{
@@ -59,6 +61,7 @@ var setup_highlight  =  function(fv){
                 });
                 $j('#loading').css('display','none');
                 variant_menu();
+                add_highlight_all();
                 if(fv.n_source == 4 && fv.ready_flag){
                   fv.ready_flag = false;
 		  setTimeout(function(){ check_global_selection(); }, 300);
