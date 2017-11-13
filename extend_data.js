@@ -16,3 +16,5 @@ var extend_categories = extendProtVista.extend_categories;
 var add_disease_menu = extendProtVista.add_disease_menu;
 var uploaded_data = extendProtVista.uploaded_data;
 var check_coordinates = extendProtVista.check_coordinates;
+var add_binding_residues = extendProtVista.add_binding_residues;
+var add_asa_residues = extendProtVista.add_asa_residues;

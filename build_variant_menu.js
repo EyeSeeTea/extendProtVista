@@ -51,7 +51,7 @@ var update_diseases = function(){
       keep_variants[ j.internalId ] = true;
     });
   });
-  $j('.up_pftv_variant').each(function(i){
+  $j('.up_pftv_category_VARIATION .up_pftv_variant').each(function(i){
     if(!keep_variants[ $j(this).attr("name") ])$j(this).remove();
   });
 };
@@ -103,7 +103,7 @@ function filter_by_disease( D ){
       keep_variants[ j.internalId ] = true;
     });
   });
-  $j('.up_pftv_variant').each(function(i){
+  $j('.up_pftv_category_VARIATION .up_pftv_variant').each(function(i){
     if(!keep_variants[ $j(this).attr("name") ])$j(this).remove();
   });
 }

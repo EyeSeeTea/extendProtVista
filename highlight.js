@@ -1,6 +1,7 @@
 "use strict";
 var highlight_all = require('./highlight_all');
 var add_highlight_all = highlight_all.add_highlight_all;
+var get_all_async_soruces = require('./get_all_async_soruces');
 
 var add_highlight = function(d){
 	var __fake= ['__fake',[{
@@ -13,7 +14,6 @@ var add_highlight = function(d){
 };
 
 var setup_highlight  =  function(fv){
-        fv.ready_flag = true;
 
 	fv.__highlight = function(e){
                 if(!e['begin'] || !e['end']){
@@ -46,25 +46,14 @@ var setup_highlight  =  function(fv){
 
 	}
 
-	fv.getDispatcher().on("ready", function(o) {
+	fv.getDispatcher().on("ready", function(obj) {
 		__hide_fake();
-                /*$j(".up_pftv_icon-reset").click(function(){
-                  console.log(".up_pftv_icon-reset.click");
-                  trigger_aa_cleared();
-                });*/
-                fv.data.forEach(function(i){
-                  if(i[0]=="INTERACTING_RESIDUES"){
-                    IRD = i[1];
-                  }else if(i[0]=="RESIDUE_ASA"){
-                    ASA = i[1];
-                  }
-                });
                 $j('#loading').css('display','none');
                 variant_menu();
                 add_highlight_all();
-                if(fv.n_source == 4 && fv.ready_flag){
-                  fv.ready_flag = false;
-		  setTimeout(function(){ check_global_selection(); }, 300);
+                if(obj == "load_ready"){
+		  setTimeout(function(){ check_global_selection(); }, 600);
+                  setTimeout(function(){ get_all_async_soruces(); }, 300);
                 }
 	});
 };

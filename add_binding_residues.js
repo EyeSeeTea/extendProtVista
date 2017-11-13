@@ -1,9 +1,11 @@
 "use strict";
 
-var add_binding_residues = function(d){
+var add_binding_residues = function(_n){
+  var b_res = null;
   if( !imported_flag && top.binding_residues && top.binding_residues[0] > 0 ){
     var n_model = top.n_model_main_frame;
-    var  b_res = ["INTERACTING_RESIDUES",[]]; 
+    if(_n) n_model = _n;
+    b_res = ["INTERACTING_RESIDUES",[]]; 
     var n = 1;
     for(var i = 0;i<top.binding_residues[0];i++){
       var __f = {begin:(-100-1*i),end:(-100-1*i),internalId:'bs_'+n,type:'INTERACTING_RESIDUES',description:'<b style=\"color:grey;\">Binding Site</b><br/>Region that interacts with other proteins in the complex'};
@@ -12,13 +14,17 @@ var add_binding_residues = function(d){
     }
     var chain = JSON.parse(  getParameterByName('alignment') )['chain'];
     var n = 0;
-    top.binding_residues[n_model][chain].forEach(function(i){
-      b_res[1][n].begin = i.begin;
-      b_res[1][n].end = i.end;
-      n++;
-    });
-    d.push( b_res );
+    if(top.binding_residues[n_model][chain]){
+      top.binding_residues[n_model][chain].forEach(function(i){
+        b_res[1][n].begin = i.begin;
+        b_res[1][n].end = i.end;
+        n++;
+      });
+    }else{
+      b_res = null;
+    }
   }
+  return b_res;
 };
 
 function getParameterByName(name, url) {

@@ -1,9 +1,11 @@
 require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 "use strict";
 
-var add_asa_residues = function (d){
+var add_asa_residues = function (_n){
+  var asa_res = null;
   if( !imported_flag && top.asa_residues ){
     var n_model = top.n_model_main_frame-1;
+    if(_n)n_model = _n-1;
     var asa_res = ["RESIDUE_ASA",[]]; 
     var n = 1;
     for(var i = 0;i<__alignment.uniprotLength+1;i++){
@@ -21,20 +23,22 @@ var add_asa_residues = function (d){
         if(b<0)b = 0;
         var color = 'rgb('+r+',0,'+b+')';
         var rasa = parseFloat(i[1]*100).toFixed(2);
-        asa_res[1][ parseInt(i[0]) ].variants = [{ color:color, 
-                                                   alternativeSequence:'', 
-                                                   type:'measure', 
-                                                   begin: i[0], 
-                                                   end: i[0], 
-                                                   score:i[1], 
-                                                   internalId:'asa_'+n, 
-                                                   description:'<b style=\"color:grey;\">Relative accessible surface area</b><br/>Residue accesibility '+rasa+'%'
-        }];
+        if(asa_res[1][ parseInt(i[0]) ]){
+          asa_res[1][ parseInt(i[0]) ].variants = [{ color:color, 
+                                                     alternativeSequence:'', 
+                                                     type:'measure', 
+                                                     begin: i[0], 
+                                                     end: i[0], 
+                                                     score:i[1], 
+                                                     internalId:'asa_'+n, 
+                                                     description:'<b style=\"color:grey;\">Relative accessible surface area</b><br/>Residue accesibility '+rasa+'%'
+          }];
+        }
         n++;
       });
-      d.push( asa_res );
     }
   }
+  return asa_res;
 };
 
 function getParameterByName(name, url) {
@@ -54,10 +58,12 @@ module.exports = add_asa_residues;
 },{}],2:[function(require,module,exports){
 "use strict";
 
-var add_binding_residues = function(d){
+var add_binding_residues = function(_n){
+  var b_res = null;
   if( !imported_flag && top.binding_residues && top.binding_residues[0] > 0 ){
     var n_model = top.n_model_main_frame;
-    var  b_res = ["INTERACTING_RESIDUES",[]]; 
+    if(_n) n_model = _n;
+    b_res = ["INTERACTING_RESIDUES",[]]; 
     var n = 1;
     for(var i = 0;i<top.binding_residues[0];i++){
       var __f = {begin:(-100-1*i),end:(-100-1*i),internalId:'bs_'+n,type:'INTERACTING_RESIDUES',description:'<b style=\"color:grey;\">Binding Site</b><br/>Region that interacts with other proteins in the complex'};
@@ -66,13 +72,17 @@ var add_binding_residues = function(d){
     }
     var chain = JSON.parse(  getParameterByName('alignment') )['chain'];
     var n = 0;
-    top.binding_residues[n_model][chain].forEach(function(i){
-      b_res[1][n].begin = i.begin;
-      b_res[1][n].end = i.end;
-      n++;
-    });
-    d.push( b_res );
+    if(top.binding_residues[n_model][chain]){
+      top.binding_residues[n_model][chain].forEach(function(i){
+        b_res[1][n].begin = i.begin;
+        b_res[1][n].end = i.end;
+        n++;
+      });
+    }else{
+      b_res = null;
+    }
   }
+  return b_res;
 };
 
 function getParameterByName(name, url) {
@@ -295,27 +305,23 @@ module.exports = add_dbptm;
 },{}],6:[function(require,module,exports){
 "use strict";
 
-var add_dsysmap = function (__d){
-	var d = __d[0][1];
-	var n = 1;
-	if(__external_data['dsysmap']){
-		__external_data['dsysmap'].forEach(function(i){
-			if( !d[ i['start'] ] ) return;
-			var __aux = jQuery.grep(d[ i['start']] ['variants'],function(j){ return(j['alternativeSequence']==i['variation']) });
-			var __mut = __aux[0];
-			if( __mut ){
-                                if(__mut.sourceType=="large_scale_study") __mut["color"] = "#FF0000";
-				if(!__mut['association'])__mut['association']=[];
-				var __src = __mut['association'];
-				var __name = i['disease']['text'];
-				__src.push({
-					disease:true,
-					name:__name,
-					xrefs:[{id:__accession,name:'dSysMap DB',url:'http://dsysmap.irbbarcelona.org/results.php?type=proteins&neigh=0&value='+__accession}]
-				});
-			}
-		});
-	}
+var add_dsysmap = function (data,d){
+  data.forEach(function(i){
+  	if( !d[ i['start'] ] ) return;
+  	var _aux = jQuery.grep(d[ i['start']] ['variants'],function(j){ return(j['alternativeSequence']==i['variation']) });
+  	var _mut = _aux[0];
+  	if( _mut ){
+                  if(_mut.sourceType=="large_scale_study") _mut["color"] = "#FF0000";
+  		if(!_mut['association'])_mut['association']=[];
+  		var _src = _mut['association'];
+  		var _name = i['disease']['text'];
+  		_src.push({
+  			disease:true,
+  			name:_name,
+  			xrefs:[{id:__accession,name:'dSysMap DB',url:'http://dsysmap.irbbarcelona.org/results.php?type=proteins&neigh=0&value='+__accession}]
+  		});
+  	}
+  });
 };
 
 module.exports = add_dsysmap;
@@ -323,51 +329,42 @@ module.exports = add_dsysmap;
 },{}],7:[function(require,module,exports){
 "use strict;"
 
-var add_elmdb = function(d){
-	var n = 1;
-	if( __external_data['elmdb'] && __external_data['elmdb'].length >  0){
-		var __elm = ["DOMAINS_AND_SITES",[]];
-		var __elm_flag = 1;
-		d.forEach(function(i){
-			if(i[0]=="DOMAINS_AND_SITES"){
-				__elm = i;
-				__elm_flag = 0;
-			}
-		});
-		__external_data['elmdb'].forEach(function(i){
-			var __description = 'Short linear motif ('+i['description'][0]['Regex']+')';
-			var __ext_des = {};
-			i['interactions'].forEach(function(j){
-				var key = '<b>Interactor:</b> '+j['interactorDomain']+' <b>Domain:</b> '+j['Domain'];
-				if(j['StartDomain'] != 'None' && j['StopDomain'] != 'None'){
-					key += ' <b>Start:</b> '+j['StartDomain']+' <b>End:</b> '+j['StopDomain']+'<br/>';
-				}else{
-					key += '<br/>'
-				}
-				__ext_des[key] = true;
-			});
-			var __ext = Object.keys(__ext_des);
-			if(__ext.length>0)__description = __description+'<br/>'+__ext.join("");
-			
-			var __f = {begin:i['Start'],end:i['End'],description:__description,internalId:'elm_'+n,type:'region',evidences:
-				{
-					"Imported information":[{url:'http://elm.eu.org/elms/'+i['ELMIdentifier'],id:i['ELMIdentifier'],name:'Imported from ELM'}]
-				}
-			}
-			__f['evidences']['ECO:0000269'] = [];
-			i['References'].split(" ").forEach(function(j){
-				__f['evidences']['ECO:0000269'].push({
-					id:j,
-					name:'PubMed',url:'http://www.ncbi.nlm.nih.gov/pubmed/'+j,
-					alternativeUrl:'http://europepmc.org/abstract/MED/'+j
-				});
-			});
-			__f['type'] = 'LINEAR_MOTIF'
-			__elm[1].push(__f);
-			n++;
-		});
-		if( __elm_flag ) d.push( __elm );
-	}
+var add_elmdb = function(data){
+  var n = 1;
+  var _elm = [];
+  data.forEach(function(i){
+  	var _description = 'Short linear motif ('+i['description'][0]['Regex']+')';
+  	var _ext_des = {};
+  	i['interactions'].forEach(function(j){
+  		var key = '<b>Interactor:</b> '+j['interactorDomain']+' <b>Domain:</b> '+j['Domain'];
+  		if(j['StartDomain'] != 'None' && j['StopDomain'] != 'None'){
+  			key += ' <b>Start:</b> '+j['StartDomain']+' <b>End:</b> '+j['StopDomain']+'<br/>';
+  		}else{
+  			key += '<br/>'
+  		}
+  		_ext_des[key] = true;
+  	});
+  	var _ext = Object.keys(_ext_des);
+  	if(_ext.length>0)_description = _description+'<br/>'+_ext.join("");
+  	
+  	var _f = {begin:i['Start'],end:i['End'],description:_description,internalId:'elm_'+n,type:'region',evidences:
+  		{
+  			"Imported information":[{url:'http://elm.eu.org/elms/'+i['ELMIdentifier'],id:i['ELMIdentifier'],name:'Imported from ELM'}]
+  		}
+  	}
+  	_f['evidences']['ECO:0000269'] = [];
+  	i['References'].split(" ").forEach(function(j){
+  		_f['evidences']['ECO:0000269'].push({
+  			id:j,
+  			name:'PubMed',url:'http://www.ncbi.nlm.nih.gov/pubmed/'+j,
+  			alternativeUrl:'http://europepmc.org/abstract/MED/'+j
+  		});
+  	});
+  	_f['type'] = 'LINEAR_MOTIF'
+  	_elm.push(_f);
+  	n++;
+  });
+  return _elm;
 };
 
 module.exports = add_elmdb;
@@ -446,42 +443,33 @@ module.exports =  add_iedb;
 },{}],10:[function(require,module,exports){
 "use strict";
 
-var add_interpro = function (d){
-	var n = 1;
-	if( __external_data['interpro'] && __external_data['interpro'].length >  0){
-		var __interpro = ["DOMAIN_FAMILIES",[]];
-		var __interpro_flag = 1;
-		d.forEach(function(i){
-			if(i[0]=="Domain families"){
-				__interpro = i;
-				__interpro_flag = 0;
-			}
-		});
-
-		__external_data['interpro'].forEach(function(i){
-			var k = i['description']['name'];
-			var __description = '<b>'+k+'</b>';
-			var __ext = '';
-			if( i['description']['go'] ){
-				__ext = '<b style="color:grey;">GO terms</b><br/>'
-				i['description']['go'].forEach(function(j){
-					var r = j.split(' ; ');
-					var go = r[0].replace("GO:","");
-					go = go[0].toUpperCase() + go.slice(1);
-					__ext += "<a href=\"http://amigo.geneontology.org/amigo/term/"+r[1]+"\" target=\"_blank\">"+go+"</a><br/>";
-				});
-			}
-			if( __ext.length > 0 ) __description += '<br/>'+__ext;
-			var __f = {begin:i['start'],end:i['end'],description:__description,internalId:'interpro_'+n,type:'INTERPRO_DOMAIN',evidences:
-				{
-					"Imported information":[{url:'https://www.ebi.ac.uk/interpro/protein/'+__accession,id:__accession,name:'Imported from InterPro'}]
-				}
-			}
-			__interpro[1].push(__f);
-			n++;
-		});
-		if( __interpro_flag ) d.push( __interpro );
-	}
+var add_interpro = function (data){
+  var n = 1;
+  var _interpro = [];
+  
+  data.forEach(function(i){
+  	var k = i['description']['name'];
+  	var _description = '<b>'+k+'</b>';
+  	var _ext = '';
+  	if( i['description']['go'] ){
+  		_ext = '<b style="color:grey;">GO terms</b><br/>'
+  		i['description']['go'].forEach(function(j){
+  			var r = j.split(' ; ');
+  			var go = r[0].replace("GO:","");
+  			go = go[0].toUpperCase() + go.slice(1);
+  			_ext += "<a href=\"http://amigo.geneontology.org/amigo/term/"+r[1]+"\" target=\"_blank\">"+go+"</a><br/>";
+  		});
+  	}
+  	if( _ext.length > 0 ) _description += '<br/>'+_ext;
+  	var _f = {begin:i['start'],end:i['end'],description:_description,internalId:'interpro_'+n,type:'INTERPRO_DOMAIN',evidences:
+  		{
+  			"Imported information":[{url:'https://www.ebi.ac.uk/interpro/protein/'+__accession,id:__accession,name:'Imported from InterPro'}]
+  		}
+  	}
+  	_interpro.push(_f);
+  	n++;
+  });
+  return _interpro;
 };
 
 
@@ -490,25 +478,23 @@ module.exports = add_interpro;
 },{}],11:[function(require,module,exports){
 "use strict";
 
-var add_mobi =  function(d){
-	var n = 1;
-	if( __external_data['mobi'] ){
-		var __disorder = ["DISORDERED_REGIONS",[]];
-                var __flag = false;
-		for(var i in __external_data['mobi']){
-			var __type = i.toUpperCase();
-			__external_data['mobi'][i].forEach(function(j){
-				__disorder[1].push({type:__type,begin:j['start'],end:j['end'],description:'Disordered region',internalId:'mobi_'+n,evidences:
-					{
-						"Imported information":[{url:'http://mobidb.bio.unipd.it/entries/'+__accession, id:__accession, name:'Imported from MobyDB'}]
-					}
-				});
-				n++;
-                                __flag = true;
-			});
-		}
-		if(__flag) d.push( __disorder );
-	}
+var add_mobi =  function(data){
+  var n = 1;
+  var _disorder = [];
+  var _flag = false;
+  for(var i in data){
+  	var _type = i.toUpperCase();
+  	data[i].forEach(function(j){
+  		_disorder.push({type:_type,begin:j['start'],end:j['end'],description:'Disordered region',internalId:'mobi_'+n,evidences:
+  			{
+  				"Imported information":[{url:'http://mobidb.bio.unipd.it/entries/'+__accession, id:__accession, name:'Imported from MobyDB'}]
+  			}
+  		});
+  		n++;
+                  _flag = true;
+  	});
+  }
+   return _disorder;
 };
 
 module.exports = add_mobi;
@@ -516,33 +502,31 @@ module.exports = add_mobi;
 },{}],12:[function(require,module,exports){
 "use strict";
 
-var add_pfam = function(d){
-	var n = 1;
-	if( __external_data['Pfam'] && __external_data['Pfam'].length >  0){
-		var __pfam = ["DOMAIN_FAMILIES",[]];
-
-		__external_data['Pfam'].forEach(function(i){
-			var __description = '<b>'+i['info']['description']+'</b>';
-                        __description += '<br/><b style="color:grey;">Family</b>: '+i['acc']
-			var __ext = '';
-			for(var k in i['info']['go']){
-				__ext += '<b style="color:grey;">'+k[0].toUpperCase() + k.slice(1)+'</b>: ';
-				i['info']['go'][k].forEach(function(j){
-					__ext += j+', '; 
-				});
-				__ext = __ext.slice(0, -2)+'<br/>';
-			}
-			if( __ext.length > 0 ) __description += '<br/>'+__ext;
-			var __f = {begin:i['start'],end:i['end'],description:__description,internalId:'pfam_'+n,type:'PFAM_DOMAIN',evidences:
-				{
-					"Imported information":[{url:'http://pfam.xfam.org/protein/'+__accession,id:__accession,name:'Imported from Pfam'}]
-				}
-			}
-			__pfam[1].push(__f);
-			n++;
-		});
-		d.push( __pfam );
-	}
+var add_pfam = function(data){
+  var n = 1;
+  var _pfam = [];
+  
+  data.forEach(function(i){
+  	var _description = '<b>'+i['info']['description']+'</b>';
+         _description += '<br/><b style="color:grey;">Family</b>: '+i['acc']
+  	var _ext = '';
+  	for(var k in i['info']['go']){
+  		_ext += '<b style="color:grey;">'+k[0].toUpperCase() + k.slice(1)+'</b>: ';
+  		i['info']['go'][k].forEach(function(j){
+  			_ext += j+', '; 
+  		});
+  		_ext = _ext.slice(0, -2)+'<br/>';
+  	}
+  	if( _ext.length > 0 ) _description += '<br/>'+_ext;
+  	var _f = {begin:i['start'],end:i['end'],description:_description,internalId:'pfam_'+n,type:'PFAM_DOMAIN',evidences:
+  		{
+  			"Imported information":[{url:'http://pfam.xfam.org/protein/'+__accession,id:__accession,name:'Imported from Pfam'}]
+  		}
+  	}
+  	_pfam.push(_f);
+  	n++;
+  });
+  return _pfam;
 };
 
 module.exports = add_pfam;
@@ -668,6 +652,116 @@ module.exports = add_phosphosite;
 
 },{}],14:[function(require,module,exports){
 "use strict";
+var add_asa_residues = require('./add_asa_residues');
+var add_binding_residues = require('./add_binding_residues');
+var highlight_all = require('./highlight_all');
+var add_highlight_all = highlight_all.add_highlight_all;
+
+
+var add_psa_interface = function(){
+
+  var $LOG = { 'protein':{}, 'gene':{}, 'interaction:':{} };
+  if(top.$LOG){
+    $LOG = top.$LOG;
+  }
+
+  var alignment = JSON.parse(getParameterByName("alignment"));
+  var pdb = alignment['pdb'];
+  var path = null;
+  if('path' in alignment){
+    path = alignment['path'];
+  }
+  if( top.$COMPUTED_FEATURES[pdb] ){
+    top.binding_residues = top.$COMPUTED_FEATURES[pdb]['binding_residues'];
+    top.asa_residues = top.$COMPUTED_FEATURES[pdb]['asa_residues'];
+    var asa = add_asa_residues();
+    var bs = add_binding_residues();
+    if(bs){
+      feature_viewer.drawCategories([asa,bs],feature_viewer);
+      feature_viewer.data.push(asa);
+      feature_viewer.data.push(bs);
+    }else{
+      feature_viewer.drawCategories([asa],feature_viewer);
+      feature_viewer.data.push(asa);
+    }
+    if("n_sources" in $LOG.protein){
+      $LOG.protein['n_sources']--;
+      if($LOG.protein['n_sources']==0)remove_loading_icon();
+    }
+    add_highlight_all();
+  }else{
+    var interface_url = "/compute/biopython/interface/"+pdb;
+    $LOG.protein['psa'] = {
+      'description':'Computing ASA and binding sites data',
+      'command':'GET '+interface_url,
+      'statuns':'running'
+    };
+    if(path){
+      interface_url = "/compute/biopython/interface/"+path+"/"+pdb.replace(".","__");
+    }
+    interface_url = encodeURI(interface_url);
+    console.log("Loading "+interface_url);
+    var t1 = performance.now();
+    $j.ajax({
+      url: interface_url,
+      dataType: 'json',
+      success: function(data){
+        top.$COMPUTED_FEATURES[pdb] = {};
+        top.binding_residues = data['interface'];
+        top.$COMPUTED_FEATURES[pdb]['binding_residues'] = top.binding_residues;
+        top.asa_residues = data['asa'];
+        top.$COMPUTED_FEATURES[pdb]['asa_residues'] = top.asa_residues;
+        var asa = add_asa_residues();
+        var bs = add_binding_residues();
+        if(bs){
+          feature_viewer.drawCategories([asa,bs],feature_viewer);
+          feature_viewer.data.push(asa);
+          feature_viewer.data.push(bs);
+        }else{
+          feature_viewer.drawCategories([asa],feature_viewer);
+          feature_viewer.data.push(asa);
+        }
+        add_highlight_all();
+        $LOG.protein['psa']['status'] = 'success';
+      },
+      error: function(){
+        top.binding_residues = null;
+        top.asa_residues = null;
+        $LOG.protein['psa']['status'] = 'error';
+      }
+    }).always(function(){
+      var t2 = performance.now();
+      var time_ = (t2-t1)/1000;
+      console.log("Finished "+interface_url+" "+time_.toString().substring(0,4)+"s");
+      if("n_sources" in $LOG.protein){
+        $LOG.protein['n_sources']--;
+        if($LOG.protein['n_sources']==0)remove_loading_icon();
+      }
+    });
+  }
+};
+
+function remove_loading_icon(){
+  $j("#annotations_loading_icon").remove();
+}
+
+function getParameterByName(name, url) {
+    if (!url) {
+      url = window.location.href;
+    }
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+
+module.exports = add_psa_interface;
+
+
+},{"./add_asa_residues":1,"./add_binding_residues":2,"./highlight_all":25}],15:[function(require,module,exports){
+"use strict";
 
 var add_sequence_coverage = function(d){
 	var n = 1;
@@ -683,43 +777,34 @@ var add_sequence_coverage = function(d){
 
 module.exports = add_sequence_coverage;
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 "use strict";
 
-var add_smart = function(d){
-	var n = 1;
-	if( __external_data['smart'] && __external_data['smart'].length >  0){
-		var __smart = ["DOMAIN_FAMILIES",[]];
-		var __smart_flag = 1;
-		d.forEach(function(i){
-			if(i[0]=="Domain families"){
-				__smart = i;
-				__smart_flag = 0;
-			}
-		});
-
-		__external_data['smart'].forEach(function(i){
-			var k = i['domain'].replace("_"," ");
-			k = k[0].toUpperCase() + k.slice(1);
-			var __description = '<b>'+k+'</b>';
-			var __ext = '<b style="color:grey;">Type</b>: '+i['type'][0]+i['type'].slice(1).toLowerCase();
-
-			if( __ext.length > 0 ) __description += '<br/>'+__ext;
-			var __f = {begin:i['start'],end:i['end'],description:__description,internalId:'smart_'+n,type:'SMART_DOMAIN',evidences:
-				{
-					"Imported information":[{url:'http://smart.embl.de/smart/batch.pl?INCLUDE_SIGNALP=1&IDS='+__accession,id:__accession,name:'Imported from SMART'}]
-				}
-			}
-			__smart[1].push(__f);
-			n++;
-		});
-		if( __smart_flag ) d.push( __smart );
-	}
+var add_smart = function(data){
+  var n = 1;
+  var _smart = [];
+  
+  data.forEach(function(i){
+  	var k = i['domain'].replace("_"," ");
+  	k = k[0].toUpperCase() + k.slice(1);
+  	var _description = '<b>'+k+'</b>';
+  	var _ext = '<b style="color:grey;">Type</b>: '+i['type'][0]+i['type'].slice(1).toLowerCase();
+  
+  	if( _ext.length > 0 ) _description += '<br/>'+_ext;
+  	var _f = {begin:i['start'],end:i['end'],description:_description,internalId:'smart_'+n,type:'SMART_DOMAIN',evidences:
+  		{
+  			"Imported information":[{url:'http://smart.embl.de/smart/batch.pl?INCLUDE_SIGNALP=1&IDS='+__accession,id:__accession,name:'Imported from SMART'}]
+  		}
+  	}
+  	_smart.push(_f);
+  	n++;
+  });
+  return _smart;
 };
 
 module.exports = add_smart;
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 "use strict";
 
 var continuous_data = require("./continuous_data");
@@ -765,7 +850,7 @@ function prepare_uploaded_data(){
 
 module.exports = { add_uploaded_data:add_uploaded_data, uploaded_data:uploaded_data };
 
-},{"./continuous_data":18}],17:[function(require,module,exports){
+},{"./continuous_data":19}],18:[function(require,module,exports){
 "use strict";
 
 var variant_menu = function (){
@@ -819,7 +904,7 @@ var update_diseases = function(){
       keep_variants[ j.internalId ] = true;
     });
   });
-  $j('.up_pftv_variant').each(function(i){
+  $j('.up_pftv_category_VARIATION .up_pftv_variant').each(function(i){
     if(!keep_variants[ $j(this).attr("name") ])$j(this).remove();
   });
 };
@@ -871,14 +956,14 @@ function filter_by_disease( D ){
       keep_variants[ j.internalId ] = true;
     });
   });
-  $j('.up_pftv_variant').each(function(i){
+  $j('.up_pftv_category_VARIATION .up_pftv_variant').each(function(i){
     if(!keep_variants[ $j(this).attr("name") ])$j(this).remove();
   });
 }
 
 module.exports = { variant_menu:variant_menu, update_diseases:update_diseases, add_disease_menu:add_disease_menu };
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 "use strict";
 
 var n = 1;
@@ -912,7 +997,7 @@ var continuous_data = function (d){
 
 module.exports = continuous_data;
 
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 "use strict";
 
 var extend_categories = function(categories){
@@ -933,7 +1018,115 @@ var extend_categories = function(categories){
 
 module.exports = extend_categories;
 
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
+"use strict";
+var handle_async_data = require('./handle_async_data');
+var add_psa_interface = require('./add_psa_interface');
+
+var listURL;
+var $EXTERNAL_DATA = null;
+
+if(top.$EXTERNAL_DATA && !imported_flag){
+  $EXTERNAL_DATA = top.$EXTERNAL_DATA;
+}else if(top.$IMPORTED_DATA && imported_flag){
+  $EXTERNAL_DATA = top.$IMPORTED_DATA;
+}else{
+  $EXTERNAL_DATA = {'PDBchain':{},'acc':{}};
+}
+
+var $LOG = { 'protein':{}, 'gene':{}, 'interaction:':{} };
+if(top.$LOG){
+  $LOG = top.$LOG;
+}
+
+
+function get_async_data( URL, d ){
+  var query = URL.shift();
+
+  var url = query[1];
+  var key = query[0];
+  var save_flag = query[2];
+
+  var acc = __alignment.uniprot;
+
+  if( key in $EXTERNAL_DATA['acc'] && acc in $EXTERNAL_DATA['acc'][key] ){
+    var async_data = $EXTERNAL_DATA['acc'][key][acc];
+    if(key in handle_async_data)handle_async_data[key](async_data);
+    if("n_sources" in $LOG.protein){
+      $LOG.protein['n_sources']--;
+      if($LOG.protein['n_sources']==0)remove_loading_icon();
+    }
+    if(URL.length > 0){
+      get_async_data(URL);
+      return;
+    }
+  }else{
+    $LOG.protein[key] = {
+      'description':'Loading '+key.toUpperCase(),
+      'command':'GET '+url,
+      'statuns':'running'
+    };
+    var t1 = performance.now();
+    console.log("Loading "+url);
+    $j.ajax({
+      url: url,
+      dataType: 'json',
+      timeout:30000,
+      success: function(async_data){
+        if( !(key in $EXTERNAL_DATA['acc']) )$EXTERNAL_DATA['acc'][key] = {};
+        $EXTERNAL_DATA['acc'][key][acc] = async_data;
+        if(key in handle_async_data) handle_async_data[key](async_data);
+        $LOG.protein[key]['status'] = 'success';
+      },
+      error: function(e){
+        console.log("ajax error");
+        console.log(e);
+        $LOG.protein[key]['status'] = 'error';
+      }
+    }).always(function(){
+      if(URL.length > 0){
+        get_async_data( URL, d );
+      }
+      var t2 = performance.now();
+      var time_ = (t2-t1)/1000;
+      $LOG.protein[key]['cost'] = time_.toString().substring(0,4);
+      console.log("Finished "+url+" "+time_.toString().substring(0,4)+"s");
+      if("n_sources" in $LOG.protein){
+        $LOG.protein['n_sources']--;
+        if($LOG.protein['n_sources']==0)remove_loading_icon();
+      }
+    });
+  }
+}
+
+function add_loading_icon(){
+  $j($j(".up_pftv_buttons").get(0)).prepend("<img title=\"LOADING DATA\" id=\"annotations_loading_icon\"src=\"/images/loading_em.gif\" style=\"cursor:help;position:absolute;left:10px;top:10px;\"/>");
+}
+
+function remove_loading_icon(){
+  $j("#annotations_loading_icon").remove();
+}
+
+
+var get_all_async_soruces = function(){
+  var acc = __accession;
+  var key = __alignment.pdb+":"+__alignment.chain;
+
+  add_loading_icon();
+  $LOG.protein['n_sources'] = asyncURL.length;
+
+  listURL = asyncURL;
+  var __allURL = listURL.slice(0);
+  if(!imported_flag){
+    $LOG.protein['n_sources']++;
+    add_psa_interface();
+  }
+  get_async_data(__allURL, __external_data);
+};
+
+module.exports = get_all_async_soruces;
+
+},{"./add_psa_interface":14,"./handle_async_data":23}],22:[function(require,module,exports){
 "use strict";
 
 var listURL;
@@ -1028,10 +1221,96 @@ var get_all_external_soruces = function( ){
 
 module.exports = get_all_external_soruces;
 
-},{}],21:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
+"use strict";
+var add_mobi = require('./add_mobi');
+var add_dsysmap = require('./add_dsysmap');
+var add_elmdb = require('./add_elmdb');
+var add_interpro = require('./add_interpro');
+var add_smart = require('./add_smart');
+var add_pfam = require('./add_pfam');
+var highlight_all = require('./highlight_all');
+var add_highlight_all = highlight_all.add_highlight_all;
+
+var handle_async_data = {};
+
+handle_async_data.dsysmap = function(data){
+  var variations = $j.grep(feature_viewer.data,function(n,i){
+    if(n[0]=="VARIATION")return true;
+    return false;
+  });
+  if(variations.length > 0)add_dsysmap(data,variations[0][1]);
+};
+
+handle_async_data.elmdb = function(data){
+  var category = $j.grep(feature_viewer.categories, function(n,i){if(n.name=="DOMAINS_AND_SITES")return true});
+  var elm = add_elmdb(data);
+  if( category.length>0 && elm.length>0){
+    category[0].repaint(elm);
+    add_highlight_all();
+    $j.map(feature_viewer.data, function(n,i){
+      if(n[0]=="DOMAINS_AND_SITES"){
+        feature_viewer.data[i][1] = feature_viewer.data[i][1].concat(elm);
+      }
+    });
+  }
+};
+
+handle_async_data.mobi = function(data){
+    var disorder = add_mobi(data);
+    feature_viewer.drawCategories([["DISORDERED_REGIONS",disorder]],feature_viewer);
+    add_highlight_all();
+    feature_viewer.data.push(["DISORDERED_REGIONS",disorder]);
+};
+
+handle_async_data.Pfam = function(data){
+  add_domain_family(data,"Pfam");
+};
+
+handle_async_data.smart = function(data){
+  add_domain_family(data,"smart");
+};
+
+handle_async_data.interpro = function(data){
+  add_domain_family(data,"interpro");
+};
+
+function add_domain_family(data,family){
+  var _add_function = {
+    'Pfam':function(d){
+       return add_pfam(d);
+     },
+     'smart':function(d){
+       return add_smart(d);
+     },
+     'interpro':function(d){
+       return add_interpro(d);
+     }
+  };
+  var category = $j.grep(feature_viewer.categories, function(n,i){if(n.name=="DOMAIN_FAMILIES")return true});
+  var domains = _add_function[family](data);
+  if( category.length>0 && domains.length>0){
+    category[0].repaint(domains);
+    add_highlight_all();
+    $j.map(feature_viewer.data, function(n,i){
+      if(n[0]=="DOMAIN_FAMILIES"){
+        feature_viewer.data[i][1] = feature_viewer.data[i][1].concat(domains);
+      }
+    });
+  }else if(domains.length>0){
+    feature_viewer.drawCategories([["DOMAIN_FAMILIES",domains]],feature_viewer);
+    add_highlight_all();
+    feature_viewer.data.push(["DOMAIN_FAMILIES",domains]);
+  }
+};
+
+module.exports = handle_async_data;
+
+},{"./add_dsysmap":6,"./add_elmdb":7,"./add_interpro":10,"./add_mobi":11,"./add_pfam":12,"./add_smart":16,"./highlight_all":25}],24:[function(require,module,exports){
 "use strict";
 var highlight_all = require('./highlight_all');
 var add_highlight_all = highlight_all.add_highlight_all;
+var get_all_async_soruces = require('./get_all_async_soruces');
 
 var add_highlight = function(d){
 	var __fake= ['__fake',[{
@@ -1044,7 +1323,6 @@ var add_highlight = function(d){
 };
 
 var setup_highlight  =  function(fv){
-        fv.ready_flag = true;
 
 	fv.__highlight = function(e){
                 if(!e['begin'] || !e['end']){
@@ -1077,25 +1355,14 @@ var setup_highlight  =  function(fv){
 
 	}
 
-	fv.getDispatcher().on("ready", function(o) {
+	fv.getDispatcher().on("ready", function(obj) {
 		__hide_fake();
-                /*$j(".up_pftv_icon-reset").click(function(){
-                  console.log(".up_pftv_icon-reset.click");
-                  trigger_aa_cleared();
-                });*/
-                fv.data.forEach(function(i){
-                  if(i[0]=="INTERACTING_RESIDUES"){
-                    IRD = i[1];
-                  }else if(i[0]=="RESIDUE_ASA"){
-                    ASA = i[1];
-                  }
-                });
                 $j('#loading').css('display','none');
                 variant_menu();
                 add_highlight_all();
-                if(fv.n_source == 4 && fv.ready_flag){
-                  fv.ready_flag = false;
-		  setTimeout(function(){ check_global_selection(); }, 300);
+                if(obj == "load_ready"){
+		  setTimeout(function(){ check_global_selection(); }, 600);
+                  setTimeout(function(){ get_all_async_soruces(); }, 300);
                 }
 	});
 };
@@ -1153,7 +1420,7 @@ var check_coordinates = function(){
 
 module.exports = {add_highlight:add_highlight, setup_highlight:setup_highlight, check_coordinates:check_coordinates};
 
-},{"./highlight_all":22}],22:[function(require,module,exports){
+},{"./get_all_async_soruces":21,"./highlight_all":25}],25:[function(require,module,exports){
 "use strict";
 
 function add_highlight_all(){
@@ -1206,7 +1473,7 @@ function trigger_event(selection){
 
 module.exports = {add_highlight_all:add_highlight_all};
 
-},{}],23:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 "use strict";
 
 var max_zoom = function (fv){
@@ -1216,7 +1483,7 @@ var max_zoom = function (fv){
 module.exports = max_zoom;
 
 
-},{}],24:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 "use strict";
 
 var rebuild_ptm = function(d){
@@ -1259,7 +1526,7 @@ var rebuild_ptm = function(d){
 module.exports = rebuild_ptm;
 
 
-},{}],25:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 "use strict";
 
 var rename_structural_features = function(d){
@@ -1286,17 +1553,11 @@ var add_disease_menu = build_variant_menu.add_disease_menu;
 var add_evidences = require('./add_evidences');
 var add_asa_residues = require('./add_asa_residues');
 var add_binding_residues = require('./add_binding_residues');
-var add_interpro = require('./add_interpro');
-var add_smart = require('./add_smart');
-var add_pfam = require('./add_pfam');
-var add_elmdb = require('./add_elmdb');
 var add_coverage = require('./add_coverage');
 var add_sequence_coverage = require('./add_sequence_coverage');
-var add_dsysmap = require('./add_dsysmap');
 var add_biomuta = require('./add_biomuta');
 var rename_structural_features = require('./rename_structural_features');
 var rebuild_ptm = require('./rebuild_ptm');
-var add_mobi = require('./add_mobi');
 var add_iedb = require('./add_iedb');
 var add_phosphosite = require('./add_phosphosite');
 var add_dbptm = require('./add_dbptm');
@@ -1304,7 +1565,6 @@ var highlight = require('./highlight');
 var add_highlight = highlight.add_highlight;
 var setup_highlight = highlight.setup_highlight;
 var check_coordinates = highlight.check_coordinates;
-
 
 var upgrade_fv = function(fv){
 	max_zoom(fv);
@@ -1315,40 +1575,35 @@ var upgrade_fv = function(fv){
 var extend_features =  function(features){
         features_extended = true;
 	add_evidences(features);
-	add_pfam(features);
-	add_smart(features);
-	add_interpro(features);
 	add_iedb(features);
-	add_mobi(features);
-	add_elmdb(features);
 	add_coverage(features);
         add_sequence_coverage(features);
 	add_phosphosite(features);
 	add_dbptm(features);
 	rebuild_ptm(features);
-        add_binding_residues(features);
-        add_asa_residues(features);
         add_uploaded_data(features);
 	add_highlight(features);
 };
 
 var extend_variants = function(features){
 	add_biomuta(features);
-	add_dsysmap(features);
         add_disease_menu(features);
 };
 
 module.exports = { 
-                   upgrade_fv:upgrade_fv, 
-                   extend_features:extend_features, 
-                   extend_variants:extend_variants, 
-                   get_all_external_soruces:get_all_external_soruces,
-                   variant_menu:variant_menu,
-                   update_diseases:update_diseases,
-                   extend_categories:extend_categories,
-                   add_disease_menu:add_disease_menu,
-                   uploaded_data:uploaded_data,
-                   check_coordinates:check_coordinates
+  upgrade_fv:upgrade_fv, 
+  extend_features:extend_features, 
+  extend_variants:extend_variants, 
+  get_all_external_soruces:get_all_external_soruces,
+  variant_menu:variant_menu,
+  update_diseases:update_diseases,
+  extend_categories:extend_categories,
+  add_disease_menu:add_disease_menu,
+  uploaded_data:uploaded_data,
+  check_coordinates:check_coordinates,
+  add_binding_residues:add_binding_residues,
+  add_asa_residues:add_asa_residues
 };
 
-},{"./add_asa_residues":1,"./add_binding_residues":2,"./add_biomuta":3,"./add_coverage":4,"./add_dbptm":5,"./add_dsysmap":6,"./add_elmdb":7,"./add_evidences":8,"./add_iedb":9,"./add_interpro":10,"./add_mobi":11,"./add_pfam":12,"./add_phosphosite":13,"./add_sequence_coverage":14,"./add_smart":15,"./add_uploaded_data":16,"./build_variant_menu":17,"./extend_categories":19,"./get_all_external_soruces":20,"./highlight":21,"./max_zoom":23,"./rebuild_ptm":24,"./rename_structural_features":25}]},{},[]);
+
+},{"./add_asa_residues":1,"./add_binding_residues":2,"./add_biomuta":3,"./add_coverage":4,"./add_dbptm":5,"./add_evidences":8,"./add_iedb":9,"./add_phosphosite":13,"./add_sequence_coverage":15,"./add_uploaded_data":17,"./build_variant_menu":18,"./extend_categories":20,"./get_all_external_soruces":22,"./highlight":24,"./max_zoom":26,"./rebuild_ptm":27,"./rename_structural_features":28}]},{},[]);
