@@ -5,6 +5,7 @@ var add_elmdb = require('./add_elmdb');
 var add_interpro = require('./add_interpro');
 var add_smart = require('./add_smart');
 var add_pfam = require('./add_pfam');
+var add_pdb_redo = require('./add_pdb_redo');
 var highlight_all = require('./highlight_all');
 var add_highlight_all = highlight_all.add_highlight_all;
 
@@ -37,6 +38,20 @@ handle_async_data.mobi = function(data){
     feature_viewer.drawCategories([["DISORDERED_REGIONS",disorder]],feature_viewer);
     add_highlight_all();
     feature_viewer.data.push(["DISORDERED_REGIONS",disorder]);
+};
+
+handle_async_data.pdb_redo = function(data,pdb_chain,global_external_pdb_chain){
+    var pdb_redo_data = null;
+    if( !pdb_chain ){
+      pdb_redo_data = add_pdb_redo.load(data);
+    }else{
+      pdb_redo_data = add_pdb_redo.save(data,pdb_chain,global_external_pdb_chain);
+    }
+    if(pdb_redo_data){
+      feature_viewer.drawCategories([["PDB_REDO",pdb_redo_data]],feature_viewer);
+      add_highlight_all();
+      feature_viewer.data.push(["PDB_REDO",pdb_redo_data]);
+    }
 };
 
 handle_async_data.Pfam = function(data){

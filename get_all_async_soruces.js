@@ -1,6 +1,7 @@
 "use strict";
 var handle_async_data = require('./handle_async_data');
 var add_psa_interface = require('./add_psa_interface');
+//var add_molprobity = require('./add_molprobity');
 
 var listURL;
 var $EXTERNAL_DATA = null;
@@ -27,9 +28,15 @@ function get_async_data( URL, d ){
   var save_flag = query[2];
 
   var acc = __alignment.uniprot;
+  var external_data_key = 'acc';
+  if(!save_flag){
+    acc = key;
+    key = __alignment.pdb+":"+__alignment.chain;
+    external_data_key = 'PDBchain';
+  }
 
-  if( key in $EXTERNAL_DATA['acc'] && acc in $EXTERNAL_DATA['acc'][key] ){
-    var async_data = $EXTERNAL_DATA['acc'][key][acc];
+  if( key in $EXTERNAL_DATA[external_data_key] && acc in $EXTERNAL_DATA[external_data_key][key] ){
+    var async_data = $EXTERNAL_DATA[external_data_key][key][acc];
     if(key in handle_async_data)handle_async_data[key](async_data);
     if("n_sources" in $LOG.protein){
       $LOG.protein['n_sources']--;
@@ -52,9 +59,13 @@ function get_async_data( URL, d ){
       dataType: 'json',
       timeout:30000,
       success: function(async_data){
-        if( !(key in $EXTERNAL_DATA['acc']) )$EXTERNAL_DATA['acc'][key] = {};
-        $EXTERNAL_DATA['acc'][key][acc] = async_data;
-        if(key in handle_async_data) handle_async_data[key](async_data);
+        if( !(key in $EXTERNAL_DATA[external_data_key]) )$EXTERNAL_DATA[external_data_key][key] = {};
+        if(save_flag){
+          $EXTERNAL_DATA[external_data_key][key][acc] = async_data;
+          if(key in handle_async_data) handle_async_data[key](async_data);
+        }else{
+          if(acc in handle_async_data) handle_async_data[acc](async_data,key,$EXTERNAL_DATA[external_data_key]);
+        }
         $LOG.protein[key]['status'] = 'success';
       },
       error: function(e){
@@ -97,8 +108,9 @@ var get_all_async_soruces = function(){
   listURL = asyncURL;
   var __allURL = listURL.slice(0);
   if(!imported_flag){
-    $LOG.protein['n_sources']++;
+    $LOG.protein['n_sources'] += 2;
     add_psa_interface();
+    //add_molprobity();
   }
   get_async_data(__allURL, __external_data);
 };

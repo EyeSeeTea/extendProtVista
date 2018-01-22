@@ -501,6 +501,160 @@ module.exports = add_mobi;
 
 },{}],12:[function(require,module,exports){
 "use strict";
+var highlight_all = require('./highlight_all');
+var add_highlight_all = highlight_all.add_highlight_all;
+
+
+var add_molprobity = function(){
+
+  var $LOG = { 'protein':{}, 'gene':{}, 'interaction:':{} };
+  if(top.$LOG){
+    $LOG = top.$LOG;
+  }
+
+  var alignment = JSON.parse(getParameterByName("alignment"));
+  var pdb = alignment['pdb'];
+  var path = null;
+  if('path' in alignment){
+    path = alignment['path'];
+  }
+  if( top.$COMPUTED_FEATURES[pdb] && top.$COMPUTED_FEATURES[pdb]['molprobity'] ){
+
+      var n_model = top.n_model_main_frame-1;
+      var chain = JSON.parse(  getParameterByName('alignment') )['chain'];
+
+      var data = [];
+      var rama = top.$COMPUTED_FEATURES[pdb]['molprobity']['rama'][n_model][chain]
+      if(rama && rama.length >0) data =  data.concat(rama);
+      var omega = top.$COMPUTED_FEATURES[pdb]['molprobity']['omega'][n_model][chain]
+      if(omega && omega.length >0) data =  data.concat(omega);
+      var rota= top.$COMPUTED_FEATURES[pdb]['molprobity']['rota'][n_model][chain]
+      if(rota && rota.length >0) data =  data.concat(rota);
+
+      if(data && data.length >0){
+        var molprobity = ["MOLPROBITY",data];
+        feature_viewer.drawCategories([molprobity],feature_viewer);
+        feature_viewer.data.push(molprobity);
+        add_highlight_all();       
+      }
+
+      if("n_sources" in $LOG.protein){
+        $LOG.protein['n_sources']--;
+        if($LOG.protein['n_sources']==0)remove_loading_icon();
+      }
+
+  }else{
+    var url = "/compute/molprobity/"+pdb;
+    if(path){
+      url = "/compute/molprobity/"+path;
+    }
+    $LOG.protein['molprobity'] = {
+      'description':'Computing ASA and binding sites data',
+      'command':'GET '+url,
+      'statuns':'running'
+    };
+    url = encodeURI(url);
+    console.log("Loading "+url);
+    var t1 = performance.now();
+    var recursive_get = function(){
+      $j.ajax({
+        url: url,
+        dataType: 'json',
+        success: function(data){
+          if(data['status']=='complete'){
+            if(!top.$COMPUTED_FEATURES[pdb]) top.$COMPUTED_FEATURES[pdb] = {};
+            top.$COMPUTED_FEATURES[pdb]['molprobity'] = data;
+            var n_model = top.n_model_main_frame-1;
+            var chain = JSON.parse(  getParameterByName('alignment') )['chain'];
+            var data =[];
+            var rama = top.$COMPUTED_FEATURES[pdb]['molprobity']['rama'][n_model][chain]
+            if(rama && rama.length >0) data =  data.concat(rama);
+            var omega = top.$COMPUTED_FEATURES[pdb]['molprobity']['omega'][n_model][chain]
+            if(omega && omega.length >0) data =  data.concat(omega);
+            var rota= top.$COMPUTED_FEATURES[pdb]['molprobity']['rota'][n_model][chain]
+            if(rota && rota.length >0) data =  data.concat(rota);
+            if(data && data.length >0){
+              var molprobity = ["MOLPROBITY",data];
+              try{
+                feature_viewer.drawCategories([molprobity],feature_viewer);
+                feature_viewer.data.push(molprobity);
+                add_highlight_all();
+                $LOG.protein['molprobity']['status'] = 'success';
+              }catch(err){
+                console.log(err);
+                $LOG.protein['molprobity']['status'] = 'error';
+              }
+            }
+            var t2 = performance.now();
+            var time_ = (t2-t1)/1000;
+            console.log("Finished "+url+" "+time_.toString().substring(0,4)+"s");
+            if("n_sources" in $LOG.protein){
+              $LOG.protein['n_sources']--;
+              if($LOG.protein['n_sources']==0)remove_loading_icon();
+            }
+          }else{
+            setTimeout(function(){ recursive_get(); }, 5000);
+          }
+        },
+        error: function(){
+          $LOG.protein['molprobity']['status'] = 'error';
+          var t2 = performance.now();
+          var time_ = (t2-t1)/1000;
+          console.log("Finished "+url+" "+time_.toString().substring(0,4)+"s");
+          if("n_sources" in $LOG.protein){
+            $LOG.protein['n_sources']--;
+            if($LOG.protein['n_sources']==0)remove_loading_icon();
+          }
+        }
+      });
+    }
+    recursive_get();
+  }
+};
+
+function remove_loading_icon(){
+  $j("#annotations_loading_icon").remove();
+}
+
+function getParameterByName(name, url) {
+    if (!url) {
+      url = window.location.href;
+    }
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+
+module.exports = add_molprobity;
+
+
+},{"./highlight_all":27}],13:[function(require,module,exports){
+"use strict";
+
+var add_pdb_redo = new function(){
+  var self = this;
+  self.load = function(data){
+    return data;
+  };
+
+  self.save = function(data,pdb_chain,global_external_pdb_chain){
+    var pdb = pdb_chain.slice(0, -2);
+    for(var i in data){
+      if( !(pdb+":"+i in global_external_pdb_chain) )global_external_pdb_chain[pdb+":"+i]={};
+      global_external_pdb_chain[pdb+":"+i]['pdb_redo'] = data[i];
+    }
+    return global_external_pdb_chain[pdb_chain]['pdb_redo'];
+  };
+
+};
+
+module.exports = add_pdb_redo;
+
+},{}],14:[function(require,module,exports){
+"use strict";
 
 var add_pfam = function(data){
   var n = 1;
@@ -531,7 +685,7 @@ var add_pfam = function(data){
 
 module.exports = add_pfam;
 
-},{}],13:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 "use strict";
 
 var add_phosphosite = function(d){
@@ -650,11 +804,12 @@ var add_phosphosite = function(d){
 
 module.exports = add_phosphosite;
 
-},{}],14:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 "use strict";
 var add_asa_residues = require('./add_asa_residues');
 var add_binding_residues = require('./add_binding_residues');
 var highlight_all = require('./highlight_all');
+var add_molprobity = require('./add_molprobity');
 var add_highlight_all = highlight_all.add_highlight_all;
 
 
@@ -689,6 +844,7 @@ var add_psa_interface = function(){
       if($LOG.protein['n_sources']==0)remove_loading_icon();
     }
     add_highlight_all();
+    if( top.$COMPUTED_FEATURES[pdb]['molprobity'] )add_molprobity();
   }else{
     var interface_url = "/compute/biopython/interface/"+pdb;
     $LOG.protein['psa'] = {
@@ -706,11 +862,17 @@ var add_psa_interface = function(){
       url: interface_url,
       dataType: 'json',
       success: function(data){
-        top.$COMPUTED_FEATURES[pdb] = {};
+        if(!top.$COMPUTED_FEATURES[pdb])top.$COMPUTED_FEATURES[pdb] = {};
+
         top.binding_residues = data['interface'];
         top.$COMPUTED_FEATURES[pdb]['binding_residues'] = top.binding_residues;
+
         top.asa_residues = data['asa'];
         top.$COMPUTED_FEATURES[pdb]['asa_residues'] = top.asa_residues;
+
+        top.rri_residues = data['rri'];
+        top.$COMPUTED_FEATURES[pdb]['rri'] = data['rri'];
+
         var asa = add_asa_residues();
         var bs = add_binding_residues();
         if(bs){
@@ -737,6 +899,11 @@ var add_psa_interface = function(){
         $LOG.protein['n_sources']--;
         if($LOG.protein['n_sources']==0)remove_loading_icon();
       }
+      if(!top.pdb_redo){
+        add_molprobity();
+      }else{
+        $LOG.protein['n_sources']--;
+      }
     });
   }
 };
@@ -760,7 +927,7 @@ function getParameterByName(name, url) {
 module.exports = add_psa_interface;
 
 
-},{"./add_asa_residues":1,"./add_binding_residues":2,"./highlight_all":25}],15:[function(require,module,exports){
+},{"./add_asa_residues":1,"./add_binding_residues":2,"./add_molprobity":12,"./highlight_all":27}],17:[function(require,module,exports){
 "use strict";
 
 var add_sequence_coverage = function(d){
@@ -777,7 +944,7 @@ var add_sequence_coverage = function(d){
 
 module.exports = add_sequence_coverage;
 
-},{}],16:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 "use strict";
 
 var add_smart = function(data){
@@ -804,7 +971,7 @@ var add_smart = function(data){
 
 module.exports = add_smart;
 
-},{}],17:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 "use strict";
 
 var continuous_data = require("./continuous_data");
@@ -850,7 +1017,7 @@ function prepare_uploaded_data(){
 
 module.exports = { add_uploaded_data:add_uploaded_data, uploaded_data:uploaded_data };
 
-},{"./continuous_data":19}],18:[function(require,module,exports){
+},{"./continuous_data":21}],20:[function(require,module,exports){
 "use strict";
 
 var variant_menu = function (){
@@ -963,7 +1130,7 @@ function filter_by_disease( D ){
 
 module.exports = { variant_menu:variant_menu, update_diseases:update_diseases, add_disease_menu:add_disease_menu };
 
-},{}],19:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 "use strict";
 
 var n = 1;
@@ -997,7 +1164,7 @@ var continuous_data = function (d){
 
 module.exports = continuous_data;
 
-},{}],20:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 "use strict";
 
 var extend_categories = function(categories){
@@ -1018,10 +1185,11 @@ var extend_categories = function(categories){
 
 module.exports = extend_categories;
 
-},{}],21:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 "use strict";
 var handle_async_data = require('./handle_async_data');
 var add_psa_interface = require('./add_psa_interface');
+//var add_molprobity = require('./add_molprobity');
 
 var listURL;
 var $EXTERNAL_DATA = null;
@@ -1048,9 +1216,15 @@ function get_async_data( URL, d ){
   var save_flag = query[2];
 
   var acc = __alignment.uniprot;
+  var external_data_key = 'acc';
+  if(!save_flag){
+    acc = key;
+    key = __alignment.pdb+":"+__alignment.chain;
+    external_data_key = 'PDBchain';
+  }
 
-  if( key in $EXTERNAL_DATA['acc'] && acc in $EXTERNAL_DATA['acc'][key] ){
-    var async_data = $EXTERNAL_DATA['acc'][key][acc];
+  if( key in $EXTERNAL_DATA[external_data_key] && acc in $EXTERNAL_DATA[external_data_key][key] ){
+    var async_data = $EXTERNAL_DATA[external_data_key][key][acc];
     if(key in handle_async_data)handle_async_data[key](async_data);
     if("n_sources" in $LOG.protein){
       $LOG.protein['n_sources']--;
@@ -1073,9 +1247,13 @@ function get_async_data( URL, d ){
       dataType: 'json',
       timeout:30000,
       success: function(async_data){
-        if( !(key in $EXTERNAL_DATA['acc']) )$EXTERNAL_DATA['acc'][key] = {};
-        $EXTERNAL_DATA['acc'][key][acc] = async_data;
-        if(key in handle_async_data) handle_async_data[key](async_data);
+        if( !(key in $EXTERNAL_DATA[external_data_key]) )$EXTERNAL_DATA[external_data_key][key] = {};
+        if(save_flag){
+          $EXTERNAL_DATA[external_data_key][key][acc] = async_data;
+          if(key in handle_async_data) handle_async_data[key](async_data);
+        }else{
+          if(acc in handle_async_data) handle_async_data[acc](async_data,key,$EXTERNAL_DATA[external_data_key]);
+        }
         $LOG.protein[key]['status'] = 'success';
       },
       error: function(e){
@@ -1118,15 +1296,16 @@ var get_all_async_soruces = function(){
   listURL = asyncURL;
   var __allURL = listURL.slice(0);
   if(!imported_flag){
-    $LOG.protein['n_sources']++;
+    $LOG.protein['n_sources'] += 2;
     add_psa_interface();
+    //add_molprobity();
   }
   get_async_data(__allURL, __external_data);
 };
 
 module.exports = get_all_async_soruces;
 
-},{"./add_psa_interface":14,"./handle_async_data":23}],22:[function(require,module,exports){
+},{"./add_psa_interface":16,"./handle_async_data":25}],24:[function(require,module,exports){
 "use strict";
 
 var listURL;
@@ -1221,7 +1400,7 @@ var get_all_external_soruces = function( ){
 
 module.exports = get_all_external_soruces;
 
-},{}],23:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 "use strict";
 var add_mobi = require('./add_mobi');
 var add_dsysmap = require('./add_dsysmap');
@@ -1229,6 +1408,7 @@ var add_elmdb = require('./add_elmdb');
 var add_interpro = require('./add_interpro');
 var add_smart = require('./add_smart');
 var add_pfam = require('./add_pfam');
+var add_pdb_redo = require('./add_pdb_redo');
 var highlight_all = require('./highlight_all');
 var add_highlight_all = highlight_all.add_highlight_all;
 
@@ -1261,6 +1441,20 @@ handle_async_data.mobi = function(data){
     feature_viewer.drawCategories([["DISORDERED_REGIONS",disorder]],feature_viewer);
     add_highlight_all();
     feature_viewer.data.push(["DISORDERED_REGIONS",disorder]);
+};
+
+handle_async_data.pdb_redo = function(data,pdb_chain,global_external_pdb_chain){
+    var pdb_redo_data = null;
+    if( !pdb_chain ){
+      pdb_redo_data = add_pdb_redo.load(data);
+    }else{
+      pdb_redo_data = add_pdb_redo.save(data,pdb_chain,global_external_pdb_chain);
+    }
+    if(pdb_redo_data){
+      feature_viewer.drawCategories([["PDB_REDO",pdb_redo_data]],feature_viewer);
+      add_highlight_all();
+      feature_viewer.data.push(["PDB_REDO",pdb_redo_data]);
+    }
 };
 
 handle_async_data.Pfam = function(data){
@@ -1306,7 +1500,7 @@ function add_domain_family(data,family){
 
 module.exports = handle_async_data;
 
-},{"./add_dsysmap":6,"./add_elmdb":7,"./add_interpro":10,"./add_mobi":11,"./add_pfam":12,"./add_smart":16,"./highlight_all":25}],24:[function(require,module,exports){
+},{"./add_dsysmap":6,"./add_elmdb":7,"./add_interpro":10,"./add_mobi":11,"./add_pdb_redo":13,"./add_pfam":14,"./add_smart":18,"./highlight_all":27}],26:[function(require,module,exports){
 "use strict";
 var highlight_all = require('./highlight_all');
 var add_highlight_all = highlight_all.add_highlight_all;
@@ -1420,7 +1614,7 @@ var check_coordinates = function(){
 
 module.exports = {add_highlight:add_highlight, setup_highlight:setup_highlight, check_coordinates:check_coordinates};
 
-},{"./get_all_async_soruces":21,"./highlight_all":25}],25:[function(require,module,exports){
+},{"./get_all_async_soruces":23,"./highlight_all":27}],27:[function(require,module,exports){
 "use strict";
 
 function add_highlight_all(){
@@ -1473,7 +1667,7 @@ function trigger_event(selection){
 
 module.exports = {add_highlight_all:add_highlight_all};
 
-},{}],26:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 "use strict";
 
 var max_zoom = function (fv){
@@ -1483,7 +1677,7 @@ var max_zoom = function (fv){
 module.exports = max_zoom;
 
 
-},{}],27:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 "use strict";
 
 var rebuild_ptm = function(d){
@@ -1526,7 +1720,7 @@ var rebuild_ptm = function(d){
 module.exports = rebuild_ptm;
 
 
-},{}],28:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 "use strict";
 
 var rename_structural_features = function(d){
@@ -1606,4 +1800,4 @@ module.exports = {
 };
 
 
-},{"./add_asa_residues":1,"./add_binding_residues":2,"./add_biomuta":3,"./add_coverage":4,"./add_dbptm":5,"./add_evidences":8,"./add_iedb":9,"./add_phosphosite":13,"./add_sequence_coverage":15,"./add_uploaded_data":17,"./build_variant_menu":18,"./extend_categories":20,"./get_all_external_soruces":22,"./highlight":24,"./max_zoom":26,"./rebuild_ptm":27,"./rename_structural_features":28}]},{},[]);
+},{"./add_asa_residues":1,"./add_binding_residues":2,"./add_biomuta":3,"./add_coverage":4,"./add_dbptm":5,"./add_evidences":8,"./add_iedb":9,"./add_phosphosite":15,"./add_sequence_coverage":17,"./add_uploaded_data":19,"./build_variant_menu":20,"./extend_categories":22,"./get_all_external_soruces":24,"./highlight":26,"./max_zoom":28,"./rebuild_ptm":29,"./rename_structural_features":30}]},{},[]);

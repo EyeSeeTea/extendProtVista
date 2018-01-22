@@ -2,6 +2,7 @@
 var add_asa_residues = require('./add_asa_residues');
 var add_binding_residues = require('./add_binding_residues');
 var highlight_all = require('./highlight_all');
+var add_molprobity = require('./add_molprobity');
 var add_highlight_all = highlight_all.add_highlight_all;
 
 
@@ -36,6 +37,7 @@ var add_psa_interface = function(){
       if($LOG.protein['n_sources']==0)remove_loading_icon();
     }
     add_highlight_all();
+    if( top.$COMPUTED_FEATURES[pdb]['molprobity'] )add_molprobity();
   }else{
     var interface_url = "/compute/biopython/interface/"+pdb;
     $LOG.protein['psa'] = {
@@ -53,11 +55,17 @@ var add_psa_interface = function(){
       url: interface_url,
       dataType: 'json',
       success: function(data){
-        top.$COMPUTED_FEATURES[pdb] = {};
+        if(!top.$COMPUTED_FEATURES[pdb])top.$COMPUTED_FEATURES[pdb] = {};
+
         top.binding_residues = data['interface'];
         top.$COMPUTED_FEATURES[pdb]['binding_residues'] = top.binding_residues;
+
         top.asa_residues = data['asa'];
         top.$COMPUTED_FEATURES[pdb]['asa_residues'] = top.asa_residues;
+
+        top.rri_residues = data['rri'];
+        top.$COMPUTED_FEATURES[pdb]['rri'] = data['rri'];
+
         var asa = add_asa_residues();
         var bs = add_binding_residues();
         if(bs){
@@ -83,6 +91,11 @@ var add_psa_interface = function(){
       if("n_sources" in $LOG.protein){
         $LOG.protein['n_sources']--;
         if($LOG.protein['n_sources']==0)remove_loading_icon();
+      }
+      if(!top.pdb_redo){
+        add_molprobity();
+      }else{
+        $LOG.protein['n_sources']--;
       }
     });
   }

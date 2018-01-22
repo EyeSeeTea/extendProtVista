@@ -94,6 +94,31 @@ svg .up_pftv_interacting_residues {
 	fill: #006699;
 }
 
+svg .up_pftv_rama {
+	stroke: #990000;
+	fill: #990000;
+}
+
+svg .up_pftv_omega {
+	stroke: #992060;
+	fill: #992060;
+}
+
+svg .up_pftv_rota {
+	stroke: #402060;
+	fill: #402060;
+}
+
+svg .up_pftv_changed_rotamer{
+	stroke: #402060;
+	fill: #402060;
+}
+
+svg .up_pftv_h_bond_flip{
+	stroke: #CC0055;
+	fill: #CC0055;
+}
+
 .up_pftv_diseases{
   display:none;
   position:absolute;
