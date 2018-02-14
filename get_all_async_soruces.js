@@ -50,7 +50,7 @@ function get_async_data( URL, d ){
     $LOG.protein[key] = {
       'description':'Loading '+key.toUpperCase(),
       'command':'GET '+url,
-      'statuns':'running'
+      'status':'running'
     };
     var t1 = performance.now();
     console.log("Loading "+url);

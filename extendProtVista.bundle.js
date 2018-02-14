@@ -642,10 +642,9 @@ var add_pdb_redo = new function(){
 
   self.save = function(data,pdb_chain,global_external_pdb_chain){
     var pdb = pdb_chain.slice(0, -2);
-    for(var i in data){
-      if( !(pdb+":"+i in global_external_pdb_chain) )global_external_pdb_chain[pdb+":"+i]={};
-      global_external_pdb_chain[pdb+":"+i]['pdb_redo'] = data[i];
-    }
+    var ch = pdb_chain.substr(pdb_chain.length - 1);
+    if( !(pdb+":"+ch in global_external_pdb_chain) )global_external_pdb_chain[pdb+":"+ch]={};
+    global_external_pdb_chain[pdb+":"+ch]['pdb_redo'] = data[ch];
     return global_external_pdb_chain[pdb_chain]['pdb_redo'];
   };
 
@@ -899,11 +898,7 @@ var add_psa_interface = function(){
         $LOG.protein['n_sources']--;
         if($LOG.protein['n_sources']==0)remove_loading_icon();
       }
-      if(!top.pdb_redo){
-        add_molprobity();
-      }else{
-        $LOG.protein['n_sources']--;
-      }
+      add_molprobity();
     });
   }
 };
@@ -1238,7 +1233,7 @@ function get_async_data( URL, d ){
     $LOG.protein[key] = {
       'description':'Loading '+key.toUpperCase(),
       'command':'GET '+url,
-      'statuns':'running'
+      'status':'running'
     };
     var t1 = performance.now();
     console.log("Loading "+url);

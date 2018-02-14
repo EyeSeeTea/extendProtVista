@@ -119,6 +119,15 @@ svg .up_pftv_h_bond_flip{
 	fill: #CC0055;
 }
 
+svg .up_pftv_completed_res{
+	stroke: #339955;
+	fill: #339955;
+}
+svg .up_pftv_completed_loop{
+	stroke: #3355CC;
+	fill: #3355CC;
+}
+
 .up_pftv_diseases{
   display:none;
   position:absolute;

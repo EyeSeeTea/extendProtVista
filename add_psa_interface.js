@@ -92,11 +92,7 @@ var add_psa_interface = function(){
         $LOG.protein['n_sources']--;
         if($LOG.protein['n_sources']==0)remove_loading_icon();
       }
-      if(!top.pdb_redo){
-        add_molprobity();
-      }else{
-        $LOG.protein['n_sources']--;
-      }
+      add_molprobity();
     });
   }
 };
