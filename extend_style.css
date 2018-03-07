@@ -194,3 +194,8 @@ svg .up_pftv_completed_loop{
 .up_pftv_icon-button:hover{
   cursor:pointer;
 }
+
+.up_pftv_multiple_highlight {
+  fill: #FFE999;
+  fill-opacity: 1;  
+}
