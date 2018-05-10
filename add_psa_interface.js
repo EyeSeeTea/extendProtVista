@@ -43,13 +43,13 @@ var add_psa_interface = function(){
     $LOG.protein['psa'] = {
       'description':'Computing ASA and binding sites data',
       'command':'GET '+interface_url,
-      'statuns':'running'
+      'status':'running'
     };
     if(path){
       interface_url = "/compute/biopython/interface/"+path+"/"+pdb.replace(".","__");
     }
     interface_url = encodeURI(interface_url);
-    console.log("Loading "+interface_url);
+    console.log("%c Loading "+interface_url, 'color:#c60;');
     var t1 = performance.now();
     $j.ajax({
       url: interface_url,
@@ -87,7 +87,8 @@ var add_psa_interface = function(){
     }).always(function(){
       var t2 = performance.now();
       var time_ = (t2-t1)/1000;
-      console.log("Finished "+interface_url+" "+time_.toString().substring(0,4)+"s");
+      console.log("%c Finished "+interface_url+" "+time_.toString().substring(0,4)+"s", 'color:green;');
+      $LOG.protein['psa']['cost'] = time_.toString().substring(0,4);
       if("n_sources" in $LOG.protein){
         $LOG.protein['n_sources']--;
         if($LOG.protein['n_sources']==0)remove_loading_icon();

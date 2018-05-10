@@ -53,7 +53,7 @@ function get_async_data( URL, d ){
       'status':'running'
     };
     var t1 = performance.now();
-    console.log("Loading "+url);
+    console.log("%c Loading "+url, 'color:#c60;');
     $j.ajax({
       url: url,
       dataType: 'json',
@@ -80,7 +80,7 @@ function get_async_data( URL, d ){
       var t2 = performance.now();
       var time_ = (t2-t1)/1000;
       $LOG.protein[key]['cost'] = time_.toString().substring(0,4);
-      console.log("Finished "+url+" "+time_.toString().substring(0,4)+"s");
+      console.log("%c Finished "+url+" "+time_.toString().substring(0,4)+"s", 'color:green;');
       if("n_sources" in $LOG.protein){
         $LOG.protein['n_sources']--;
         if($LOG.protein['n_sources']==0)remove_loading_icon();

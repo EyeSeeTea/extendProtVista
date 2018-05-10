@@ -33,7 +33,12 @@ function add_highlight_all(){
             return false;
           })[0];
           grep['color'] = color;
-          display.push(grep);
+          if(grep['type']=="DISULFID"){
+            display.push({begin:grep['begin'],end:grep['begin'],color:grep['color']});
+            display.push({begin:grep['end'],end:grep['end'],color:grep['color']});
+          }else{
+            display.push(grep);
+          }
         });
         trigger_event(display);
       });

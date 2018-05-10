@@ -49,10 +49,10 @@ var add_molprobity = function(){
     $LOG.protein['molprobity'] = {
       'description':'Computing ASA and binding sites data',
       'command':'GET '+url,
-      'statuns':'running'
+      'status':'running'
     };
     url = encodeURI(url);
-    console.log("Loading "+url);
+    console.log("%c Loading "+url, 'color:#c60;');
     var t1 = performance.now();
     var recursive_get = function(){
       $j.ajax({
@@ -85,7 +85,8 @@ var add_molprobity = function(){
             }
             var t2 = performance.now();
             var time_ = (t2-t1)/1000;
-            console.log("Finished "+url+" "+time_.toString().substring(0,4)+"s");
+            $LOG.protein['molprobity']['cost'] = time_.toString().substring(0,4);
+            console.log("%c Finished "+url+" "+time_.toString().substring(0,4)+"s", 'color:green;');
             if("n_sources" in $LOG.protein){
               $LOG.protein['n_sources']--;
               if($LOG.protein['n_sources']==0)remove_loading_icon();
@@ -98,7 +99,8 @@ var add_molprobity = function(){
           $LOG.protein['molprobity']['status'] = 'error';
           var t2 = performance.now();
           var time_ = (t2-t1)/1000;
-          console.log("Finished "+url+" "+time_.toString().substring(0,4)+"s");
+          $LOG.protein['molprobity']['cost'] = time_.toString().substring(0,4);
+          console.log("%c Finished "+url+" "+time_.toString().substring(0,4)+"s", 'color:red;');
           if("n_sources" in $LOG.protein){
             $LOG.protein['n_sources']--;
             if($LOG.protein['n_sources']==0)remove_loading_icon();

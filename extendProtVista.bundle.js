@@ -569,10 +569,10 @@ var add_molprobity = function(){
     $LOG.protein['molprobity'] = {
       'description':'Computing ASA and binding sites data',
       'command':'GET '+url,
-      'statuns':'running'
+      'status':'running'
     };
     url = encodeURI(url);
-    console.log("Loading "+url);
+    console.log("%c Loading "+url, 'color:#c60;');
     var t1 = performance.now();
     var recursive_get = function(){
       $j.ajax({
@@ -605,7 +605,8 @@ var add_molprobity = function(){
             }
             var t2 = performance.now();
             var time_ = (t2-t1)/1000;
-            console.log("Finished "+url+" "+time_.toString().substring(0,4)+"s");
+            $LOG.protein['molprobity']['cost'] = time_.toString().substring(0,4);
+            console.log("%c Finished "+url+" "+time_.toString().substring(0,4)+"s", 'color:green;');
             if("n_sources" in $LOG.protein){
               $LOG.protein['n_sources']--;
               if($LOG.protein['n_sources']==0)remove_loading_icon();
@@ -618,7 +619,8 @@ var add_molprobity = function(){
           $LOG.protein['molprobity']['status'] = 'error';
           var t2 = performance.now();
           var time_ = (t2-t1)/1000;
-          console.log("Finished "+url+" "+time_.toString().substring(0,4)+"s");
+          $LOG.protein['molprobity']['cost'] = time_.toString().substring(0,4);
+          console.log("%c Finished "+url+" "+time_.toString().substring(0,4)+"s", 'color:red;');
           if("n_sources" in $LOG.protein){
             $LOG.protein['n_sources']--;
             if($LOG.protein['n_sources']==0)remove_loading_icon();
@@ -867,13 +869,13 @@ var add_psa_interface = function(){
     $LOG.protein['psa'] = {
       'description':'Computing ASA and binding sites data',
       'command':'GET '+interface_url,
-      'statuns':'running'
+      'status':'running'
     };
     if(path){
       interface_url = "/compute/biopython/interface/"+path+"/"+pdb.replace(".","__");
     }
     interface_url = encodeURI(interface_url);
-    console.log("Loading "+interface_url);
+    console.log("%c Loading "+interface_url, 'color:#c60;');
     var t1 = performance.now();
     $j.ajax({
       url: interface_url,
@@ -911,7 +913,8 @@ var add_psa_interface = function(){
     }).always(function(){
       var t2 = performance.now();
       var time_ = (t2-t1)/1000;
-      console.log("Finished "+interface_url+" "+time_.toString().substring(0,4)+"s");
+      console.log("%c Finished "+interface_url+" "+time_.toString().substring(0,4)+"s", 'color:green;');
+      $LOG.protein['psa']['cost'] = time_.toString().substring(0,4);
       if("n_sources" in $LOG.protein){
         $LOG.protein['n_sources']--;
         if($LOG.protein['n_sources']==0)remove_loading_icon();
@@ -1254,7 +1257,7 @@ function get_async_data( URL, d ){
       'status':'running'
     };
     var t1 = performance.now();
-    console.log("Loading "+url);
+    console.log("%c Loading "+url, 'color:#c60;');
     $j.ajax({
       url: url,
       dataType: 'json',
@@ -1281,7 +1284,7 @@ function get_async_data( URL, d ){
       var t2 = performance.now();
       var time_ = (t2-t1)/1000;
       $LOG.protein[key]['cost'] = time_.toString().substring(0,4);
-      console.log("Finished "+url+" "+time_.toString().substring(0,4)+"s");
+      console.log("%c Finished "+url+" "+time_.toString().substring(0,4)+"s", 'color:green;');
       if("n_sources" in $LOG.protein){
         $LOG.protein['n_sources']--;
         if($LOG.protein['n_sources']==0)remove_loading_icon();
@@ -1663,7 +1666,12 @@ function add_highlight_all(){
             return false;
           })[0];
           grep['color'] = color;
-          display.push(grep);
+          if(grep['type']=="DISULFID"){
+            display.push({begin:grep['begin'],end:grep['begin'],color:grep['color']});
+            display.push({begin:grep['end'],end:grep['end'],color:grep['color']});
+          }else{
+            display.push(grep);
+          }
         });
         trigger_event(display);
       });
