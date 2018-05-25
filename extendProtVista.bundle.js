@@ -496,14 +496,18 @@ module.exports = add_interpro;
 },{}],11:[function(require,module,exports){
 "use strict";
 
-var add_mobi =  function(data){
+var add_mobi =  function(_data, dom_sites){
+  var data = _data['disorder'];
   var n = 1;
   var _disorder = [];
+  var _lips = []
   var _flag = false;
   for(var i in data){
   	var _type = i.toUpperCase();
   	data[i].forEach(function(j){
-  		_disorder.push({type:_type,begin:j['start'],end:j['end'],description:'Disordered region',internalId:'mobi_'+n,evidences:
+                var _des = "";
+                if(j['method']!="full")_des = " - Inferred from "+j['method'];
+  		_disorder.push({type:_type,begin:j['start'],end:j['end'],description:'Disordered region'+_des,internalId:'mobi_'+n,evidences:
   			{
   				"Imported information":[{url:'http://mobidb.bio.unipd.it/entries/'+__accession, id:__accession, name:'Imported from MobyDB'}]
   			}
@@ -512,7 +516,29 @@ var add_mobi =  function(data){
                   _flag = true;
   	});
   }
-   return _disorder;
+  var data = _data['lips'];
+  for(var i in data){
+    var sub_type = i.toUpperCase();
+    data[i].forEach(function(j){
+      var new_flag = true;
+      dom_sites.forEach(function(d){
+        if( d['type']=="LINEAR_MOTIF" && parseInt(d["begin"]) == j["start"] && parseInt(d["end"]) == j["end"]){
+          new_flag = false;
+        }
+      });
+      if(new_flag){
+        _lips.push({type:"LINEAR_INTERACTING_PEPTIDE",begin:j['start'],end:j['end'],description:'Interacting peptide region',internalId:'mobi_'+n, evidences:
+        	{
+        	  "Imported information":[{url:'http://mobidb.bio.unipd.it/entries/'+__accession, id:__accession, name:'Imported from MobyDB'}]
+        	}
+        });
+        n++;
+        _flag = true;
+      }
+    });
+  }
+  var data = _data['lips'];
+  return [_disorder,_lips];
 };
 
 module.exports = add_mobi;
@@ -1453,10 +1479,31 @@ handle_async_data.elmdb = function(data){
 };
 
 handle_async_data.mobi = function(data){
-    var disorder = add_mobi(data);
+    var category = $j.grep(feature_viewer.categories, function(n,i){if(n.name=="DOMAINS_AND_SITES")return true});
+    var dom_and_sites = null;
+    var dom_and_sites_i = -1;
+    $j.map(feature_viewer.data, function(n,i){
+      if(n[0]=="DOMAINS_AND_SITES"){
+        dom_and_sites = n[1];
+        dom_and_sites_i = i;
+      }
+    });
+    
+    var D_ = add_mobi(data,dom_and_sites);
+    var disorder = D_[0];
+    var lips = D_[1];
+
     feature_viewer.drawCategories([["DISORDERED_REGIONS",disorder]],feature_viewer);
     add_highlight_all();
     feature_viewer.data.push(["DISORDERED_REGIONS",disorder]);
+    
+    if(category.length>0 && lips.length>0){
+      category[0].repaint(lips);
+      add_highlight_all();
+      var i = dom_and_sites_i;
+      console.log(lips);
+      feature_viewer.data[i][1] = feature_viewer.data[i][1].concat(lips);
+    }
 };
 
 handle_async_data.pdb_redo = function(data,pdb_chain,global_external_pdb_chain){

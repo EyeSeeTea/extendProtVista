@@ -44,6 +44,12 @@ svg .up_pftv_linear_motif {
 	fill: #402060;
 }
 
+svg .up_pftv_linear_interacting_peptide {
+	stroke: #CC2060;
+	fill: #CC2060;
+}
+
+
 svg .up_pftv_linear_epitope {
 	stroke: #83BE00;
 	fill: #83BE00;
@@ -69,12 +75,22 @@ svg .up_pftv_disprot {
 	fill: #A8AFF0;
 }
 
+svg .up_pftv_database {
+	stroke: #A8AFF0;
+	fill: #A8AFF0;
+}
+
 svg .up_pftv_pdb_nmr {
 	stroke: #A8F0AF;
 	fill: #A8F0AF;
 }
 
 svg .up_pftv_pdb_xray {
+	stroke: #F0A8AF;
+	fill: #F0A8AF;
+}
+
+svg .up_pftv_inferred {
 	stroke: #F0A8AF;
 	fill: #F0A8AF;
 }
