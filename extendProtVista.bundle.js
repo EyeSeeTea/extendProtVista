@@ -1469,6 +1469,7 @@ handle_async_data.elmdb = function(data){
   var elm = add_elmdb(data);
   if( category.length>0 && elm.length>0){
     category[0].repaint(elm);
+    if(category[0].is_disable)category[0].setEnable();
     add_highlight_all();
     $j.map(feature_viewer.data, function(n,i){
       if(n[0]=="DOMAINS_AND_SITES"){
@@ -1499,10 +1500,14 @@ handle_async_data.mobi = function(data){
     
     if(category.length>0 && lips.length>0){
       category[0].repaint(lips);
+      if(category[0].is_disable)category[0].setEnable();
       add_highlight_all();
       var i = dom_and_sites_i;
-      console.log(lips);
       feature_viewer.data[i][1] = feature_viewer.data[i][1].concat(lips);
+    }else if(lips.length>0){
+      feature_viewer.drawCategories([["DOMAINS_AND_SITES",lips]],feature_viewer);
+      add_highlight_all();
+      feature_viewer.data.push(["DOMAINS_AND_SITES",lips]);     
     }
 };
 
