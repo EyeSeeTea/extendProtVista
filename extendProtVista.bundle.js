@@ -521,11 +521,11 @@ var add_mobi =  function(_data, dom_sites){
     var sub_type = i.toUpperCase();
     data[i].forEach(function(j){
       var new_flag = true;
-      dom_sites.forEach(function(d){
+      /*dom_sites.forEach(function(d){
         if( d['type']=="LINEAR_MOTIF" && parseInt(d["begin"]) == j["start"] && parseInt(d["end"]) == j["end"]){
           new_flag = false;
         }
-      });
+      });*/
       if(new_flag){
         _lips.push({type:"LINEAR_INTERACTING_PEPTIDE",begin:j['start'],end:j['end'],description:'Interacting peptide region',internalId:'mobi_'+n, evidences:
         	{
@@ -558,6 +558,21 @@ var add_molprobity = function(){
 
   var alignment = JSON.parse(getParameterByName("alignment"));
   var pdb = alignment['pdb'];
+  if(!pdb){
+      console.log("%c /compute/molprobity/<PDB> PDB code is null", 'color:red;');
+      $LOG.protein['molprobity'] = {
+        'description':'Computing ASA and binding sites data',
+        'command':'GET '+interface_url,
+        'status':'error',
+        'error': '/compute/molprobity/<PDB> PDB code is null',
+        'cost':'NA'
+      };
+      if("n_sources" in $LOG.protein){
+        $LOG.protein['n_sources']--;
+        if($LOG.protein['n_sources']==0)remove_loading_icon();
+      }
+    return;
+  }
   var path = null;
   if('path' in alignment){
     path = alignment['path'];
@@ -633,6 +648,16 @@ var add_molprobity = function(){
             var time_ = (t2-t1)/1000;
             $LOG.protein['molprobity']['cost'] = time_.toString().substring(0,4);
             console.log("%c Finished "+url+" "+time_.toString().substring(0,4)+"s", 'color:green;');
+            if("n_sources" in $LOG.protein){
+              $LOG.protein['n_sources']--;
+              if($LOG.protein['n_sources']==0)remove_loading_icon();
+            }
+          }else if(data['status']=='error'){
+            $LOG.protein['molprobity']['status'] = 'error';
+            var t2 = performance.now();
+            var time_ = (t2-t1)/1000;
+            $LOG.protein['molprobity']['cost'] = time_.toString().substring(0,4);
+            console.log("%c Finished "+url+" "+time_.toString().substring(0,4)+"s", 'color:red;');
             if("n_sources" in $LOG.protein){
               $LOG.protein['n_sources']--;
               if($LOG.protein['n_sources']==0)remove_loading_icon();
@@ -867,6 +892,29 @@ var add_psa_interface = function(){
 
   var alignment = JSON.parse(getParameterByName("alignment"));
   var pdb = alignment['pdb'];
+  if(!pdb){
+      console.log("%c /compute/biopython/interface/<PDB> PDB code is null", 'color:red;');
+      $LOG.protein['psa'] = {
+        'description':'Computing ASA and binding sites data',
+        'command':'GET '+interface_url,
+        'status':'error',
+        'error': '/compute/biopython/interface/<PDB> PDB code is null',
+        'cost':'NA'
+      };
+      console.log("%c /compute/molprobity/<PDB> PDB code is null", 'color:red;');
+      $LOG.protein['molprobity'] = {
+        'description':'Computing ASA and binding sites data',
+        'command':'GET '+interface_url,
+        'status':'error',
+        'error': '/compute/molprobity/<PDB> PDB code is null',
+        'cost':'NA'
+      };
+      if("n_sources" in $LOG.protein){
+        $LOG.protein['n_sources']-=2;
+        if($LOG.protein['n_sources']==0)remove_loading_icon();
+      }
+    return;
+  }
   var path = null;
   if('path' in alignment){
     path = alignment['path'];
@@ -898,7 +946,7 @@ var add_psa_interface = function(){
       'status':'running'
     };
     if(path){
-      interface_url = "/compute/biopython/interface/"+path+"/"+pdb.replace(".","__");
+      interface_url = "/compute/biopython/interface/"+path+"/"+pdb.replace(/\./g,"__");
     }
     interface_url = encodeURI(interface_url);
     console.log("%c Loading "+interface_url, 'color:#c60;');
@@ -908,7 +956,15 @@ var add_psa_interface = function(){
       dataType: 'json',
       success: function(data){
         if(!top.$COMPUTED_FEATURES[pdb])top.$COMPUTED_FEATURES[pdb] = {};
-
+        if("error" in data){
+          top.binding_residues = null;
+          top.asa_residues = null;
+          $LOG.protein['psa']['status'] = 'error';
+          var t2 = performance.now();
+          var time_ = (t2-t1)/1000;
+          console.log("%c Finished "+interface_url+" "+time_.toString().substring(0,4)+"s", 'color:red;');
+          return;
+        }
         top.binding_residues = data['interface'];
         top.$COMPUTED_FEATURES[pdb]['binding_residues'] = top.binding_residues;
 
@@ -939,7 +995,7 @@ var add_psa_interface = function(){
     }).always(function(){
       var t2 = performance.now();
       var time_ = (t2-t1)/1000;
-      console.log("%c Finished "+interface_url+" "+time_.toString().substring(0,4)+"s", 'color:green;');
+      if($LOG.protein['psa']['status'] == 'success')console.log("%c Finished "+interface_url+" "+time_.toString().substring(0,4)+"s", 'color:green;');
       $LOG.protein['psa']['cost'] = time_.toString().substring(0,4);
       if("n_sources" in $LOG.protein){
         $LOG.protein['n_sources']--;
@@ -1034,13 +1090,14 @@ var add_uploaded_data = function(d){
 
 function prepare_uploaded_data(){
   var PDBchain = __alignment.pdb+":"+__alignment.chain;
-  PDBchain = PDBchain.replace("_dot_",".");
+  PDBchain = PDBchain.replace(/_dot_/g,".");
   var uniprot = __alignment.uniprot;
   uploaded_data = {};
 
   var aux = [ ["PDBchain",PDBchain], ["acc",uniprot]  ];
 
   aux.forEach(function( i ){
+    console.log(i);
     if( top.$UPLOADED_DATA[ i[0] ][ i[1] ] ){
       $j.each( top.$UPLOADED_DATA[ i[0] ][ i[1] ], function( track_name, info ) {
         if(info.visualization_type=="continuous"){
@@ -1052,6 +1109,8 @@ function prepare_uploaded_data(){
             uploaded_data[track_name] = uploaded_data[track_name].concat( info.data );
           }
         }
+        console.log(track_name);
+        console.log(info);
       });
     }
   });
@@ -1109,9 +1168,11 @@ var update_diseases = function(){
   if( D.length == 0 ) return;
   var keep_variants = {}
   D.forEach( function(i){
-    diseases_table[i].forEach(function(j){
-      keep_variants[ j.internalId ] = true;
-    });
+    if(diseases_table[i]){
+      diseases_table[i].forEach(function(j){
+        keep_variants[ j.internalId ] = true;
+      });
+    }
   });
   $j('.up_pftv_category_VARIATION .up_pftv_variant').each(function(i){
     if(!keep_variants[ $j(this).attr("name") ])$j(this).remove();
@@ -1624,7 +1685,8 @@ var setup_highlight  =  function(fv){
                 add_highlight_all();
                 if(obj == "load_ready"){
 		  setTimeout(function(){ check_global_selection(); }, 600);
-                  setTimeout(function(){ get_all_async_soruces(); }, 300);
+                  if(extend_features_flag) setTimeout(function(){ get_all_async_soruces(); }, 300);
+                  if(feature_analysis_flag) setTimeout(function(){ get_features_analysis(); }, 300);
                 }
 	});
 };
@@ -1841,14 +1903,16 @@ var upgrade_fv = function(fv){
 
 var extend_features =  function(features){
         features_extended = true;
-	add_evidences(features);
-	add_iedb(features);
-	add_coverage(features);
-        add_sequence_coverage(features);
-	add_phosphosite(features);
-	add_dbptm(features);
-	rebuild_ptm(features);
-        add_uploaded_data(features);
+        if(extend_features_flag){
+	  add_evidences(features);
+	  add_iedb(features);
+	  add_coverage(features);
+          add_sequence_coverage(features);
+	  add_phosphosite(features);
+	  add_dbptm(features);
+	  rebuild_ptm(features);
+          add_uploaded_data(features);
+        }
 	add_highlight(features);
 };
 

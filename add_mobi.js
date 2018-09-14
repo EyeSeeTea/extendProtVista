@@ -25,11 +25,11 @@ var add_mobi =  function(_data, dom_sites){
     var sub_type = i.toUpperCase();
     data[i].forEach(function(j){
       var new_flag = true;
-      dom_sites.forEach(function(d){
+      /*dom_sites.forEach(function(d){
         if( d['type']=="LINEAR_MOTIF" && parseInt(d["begin"]) == j["start"] && parseInt(d["end"]) == j["end"]){
           new_flag = false;
         }
-      });
+      });*/
       if(new_flag){
         _lips.push({type:"LINEAR_INTERACTING_PEPTIDE",begin:j['start'],end:j['end'],description:'Interacting peptide region',internalId:'mobi_'+n, evidences:
         	{

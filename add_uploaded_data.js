@@ -18,13 +18,14 @@ var add_uploaded_data = function(d){
 
 function prepare_uploaded_data(){
   var PDBchain = __alignment.pdb+":"+__alignment.chain;
-  PDBchain = PDBchain.replace("_dot_",".");
+  PDBchain = PDBchain.replace(/_dot_/g,".");
   var uniprot = __alignment.uniprot;
   uploaded_data = {};
 
   var aux = [ ["PDBchain",PDBchain], ["acc",uniprot]  ];
 
   aux.forEach(function( i ){
+    console.log(i);
     if( top.$UPLOADED_DATA[ i[0] ][ i[1] ] ){
       $j.each( top.$UPLOADED_DATA[ i[0] ][ i[1] ], function( track_name, info ) {
         if(info.visualization_type=="continuous"){
@@ -36,6 +37,8 @@ function prepare_uploaded_data(){
             uploaded_data[track_name] = uploaded_data[track_name].concat( info.data );
           }
         }
+        console.log(track_name);
+        console.log(info);
       });
     }
   });

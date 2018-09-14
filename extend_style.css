@@ -162,10 +162,10 @@ svg .up_pftv_completed_loop{
   overflow: hidden;
 }
 
-.up_pftv_diseases div{
+.up_pftv_diseases > div{
   overflow-x: hidden;
   overflow-y: auto;
-  height:370px;
+  height:330px;
   text-overflow: ellipsis;
   white-space: nowrap;
   padding-right:15px;

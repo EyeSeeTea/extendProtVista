@@ -12,6 +12,21 @@ var add_molprobity = function(){
 
   var alignment = JSON.parse(getParameterByName("alignment"));
   var pdb = alignment['pdb'];
+  if(!pdb){
+      console.log("%c /compute/molprobity/<PDB> PDB code is null", 'color:red;');
+      $LOG.protein['molprobity'] = {
+        'description':'Computing ASA and binding sites data',
+        'command':'GET '+interface_url,
+        'status':'error',
+        'error': '/compute/molprobity/<PDB> PDB code is null',
+        'cost':'NA'
+      };
+      if("n_sources" in $LOG.protein){
+        $LOG.protein['n_sources']--;
+        if($LOG.protein['n_sources']==0)remove_loading_icon();
+      }
+    return;
+  }
   var path = null;
   if('path' in alignment){
     path = alignment['path'];
@@ -87,6 +102,16 @@ var add_molprobity = function(){
             var time_ = (t2-t1)/1000;
             $LOG.protein['molprobity']['cost'] = time_.toString().substring(0,4);
             console.log("%c Finished "+url+" "+time_.toString().substring(0,4)+"s", 'color:green;');
+            if("n_sources" in $LOG.protein){
+              $LOG.protein['n_sources']--;
+              if($LOG.protein['n_sources']==0)remove_loading_icon();
+            }
+          }else if(data['status']=='error'){
+            $LOG.protein['molprobity']['status'] = 'error';
+            var t2 = performance.now();
+            var time_ = (t2-t1)/1000;
+            $LOG.protein['molprobity']['cost'] = time_.toString().substring(0,4);
+            console.log("%c Finished "+url+" "+time_.toString().substring(0,4)+"s", 'color:red;');
             if("n_sources" in $LOG.protein){
               $LOG.protein['n_sources']--;
               if($LOG.protein['n_sources']==0)remove_loading_icon();

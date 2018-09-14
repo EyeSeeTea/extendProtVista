@@ -47,9 +47,11 @@ var update_diseases = function(){
   if( D.length == 0 ) return;
   var keep_variants = {}
   D.forEach( function(i){
-    diseases_table[i].forEach(function(j){
-      keep_variants[ j.internalId ] = true;
-    });
+    if(diseases_table[i]){
+      diseases_table[i].forEach(function(j){
+        keep_variants[ j.internalId ] = true;
+      });
+    }
   });
   $j('.up_pftv_category_VARIATION .up_pftv_variant').each(function(i){
     if(!keep_variants[ $j(this).attr("name") ])$j(this).remove();

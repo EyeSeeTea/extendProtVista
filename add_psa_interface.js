@@ -15,6 +15,29 @@ var add_psa_interface = function(){
 
   var alignment = JSON.parse(getParameterByName("alignment"));
   var pdb = alignment['pdb'];
+  if(!pdb){
+      console.log("%c /compute/biopython/interface/<PDB> PDB code is null", 'color:red;');
+      $LOG.protein['psa'] = {
+        'description':'Computing ASA and binding sites data',
+        'command':'GET '+interface_url,
+        'status':'error',
+        'error': '/compute/biopython/interface/<PDB> PDB code is null',
+        'cost':'NA'
+      };
+      console.log("%c /compute/molprobity/<PDB> PDB code is null", 'color:red;');
+      $LOG.protein['molprobity'] = {
+        'description':'Computing ASA and binding sites data',
+        'command':'GET '+interface_url,
+        'status':'error',
+        'error': '/compute/molprobity/<PDB> PDB code is null',
+        'cost':'NA'
+      };
+      if("n_sources" in $LOG.protein){
+        $LOG.protein['n_sources']-=2;
+        if($LOG.protein['n_sources']==0)remove_loading_icon();
+      }
+    return;
+  }
   var path = null;
   if('path' in alignment){
     path = alignment['path'];
@@ -46,7 +69,7 @@ var add_psa_interface = function(){
       'status':'running'
     };
     if(path){
-      interface_url = "/compute/biopython/interface/"+path+"/"+pdb.replace(".","__");
+      interface_url = "/compute/biopython/interface/"+path+"/"+pdb.replace(/\./g,"__");
     }
     interface_url = encodeURI(interface_url);
     console.log("%c Loading "+interface_url, 'color:#c60;');
@@ -56,7 +79,15 @@ var add_psa_interface = function(){
       dataType: 'json',
       success: function(data){
         if(!top.$COMPUTED_FEATURES[pdb])top.$COMPUTED_FEATURES[pdb] = {};
-
+        if("error" in data){
+          top.binding_residues = null;
+          top.asa_residues = null;
+          $LOG.protein['psa']['status'] = 'error';
+          var t2 = performance.now();
+          var time_ = (t2-t1)/1000;
+          console.log("%c Finished "+interface_url+" "+time_.toString().substring(0,4)+"s", 'color:red;');
+          return;
+        }
         top.binding_residues = data['interface'];
         top.$COMPUTED_FEATURES[pdb]['binding_residues'] = top.binding_residues;
 
@@ -87,7 +118,7 @@ var add_psa_interface = function(){
     }).always(function(){
       var t2 = performance.now();
       var time_ = (t2-t1)/1000;
-      console.log("%c Finished "+interface_url+" "+time_.toString().substring(0,4)+"s", 'color:green;');
+      if($LOG.protein['psa']['status'] == 'success')console.log("%c Finished "+interface_url+" "+time_.toString().substring(0,4)+"s", 'color:green;');
       $LOG.protein['psa']['cost'] = time_.toString().substring(0,4);
       if("n_sources" in $LOG.protein){
         $LOG.protein['n_sources']--;

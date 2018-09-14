@@ -53,7 +53,8 @@ var setup_highlight  =  function(fv){
                 add_highlight_all();
                 if(obj == "load_ready"){
 		  setTimeout(function(){ check_global_selection(); }, 600);
-                  setTimeout(function(){ get_all_async_soruces(); }, 300);
+                  if(extend_features_flag) setTimeout(function(){ get_all_async_soruces(); }, 300);
+                  if(feature_analysis_flag) setTimeout(function(){ get_features_analysis(); }, 300);
                 }
 	});
 };

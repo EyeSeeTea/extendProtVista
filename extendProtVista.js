@@ -34,14 +34,16 @@ var upgrade_fv = function(fv){
 
 var extend_features =  function(features){
         features_extended = true;
-	add_evidences(features);
-	add_iedb(features);
-	add_coverage(features);
-        add_sequence_coverage(features);
-	add_phosphosite(features);
-	add_dbptm(features);
-	rebuild_ptm(features);
-        add_uploaded_data(features);
+        if(extend_features_flag){
+	  add_evidences(features);
+	  add_iedb(features);
+	  add_coverage(features);
+          add_sequence_coverage(features);
+	  add_phosphosite(features);
+	  add_dbptm(features);
+	  rebuild_ptm(features);
+          add_uploaded_data(features);
+        }
 	add_highlight(features);
 };
 
