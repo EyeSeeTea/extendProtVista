@@ -9,8 +9,8 @@ var variant_menu = function (){
       $j(this).addClass("unactive_disease");
       var k = $j(this).attr("title");
       $j(this).html("&#9675; "+k);
-      my_variant_viewer.reset();
     });
+    my_variant_viewer.reset();
   });
   $j('.up_pftv_inner-icon-container a').before("<a class=\"up_pftv_icon-button up_pftv_icon-location variant_std_menu\" style=\"cursor:pointer;\" title=\"Change filter: disease/cosequence\"></a>");
   $j(".variant_std_menu").click(function(i){

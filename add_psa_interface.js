@@ -60,7 +60,14 @@ var add_psa_interface = function(){
       if($LOG.protein['n_sources']==0)remove_loading_icon();
     }
     add_highlight_all();
-    if( top.$COMPUTED_FEATURES[pdb]['molprobity'] )add_molprobity();
+    if( top.$COMPUTED_FEATURES[pdb]['molprobity'] ){
+      add_molprobity();
+    }else{
+      if("n_sources" in $LOG.protein){
+        $LOG.protein['n_sources']--;
+        if($LOG.protein['n_sources']==0)remove_loading_icon();
+      }     
+    }
   }else{
     var interface_url = "/compute/biopython/interface/"+pdb;
     $LOG.protein['psa'] = {

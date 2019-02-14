@@ -121,13 +121,19 @@ var add_biomuta  =  function(__d){
 				}
 				__name = __name.charAt(0).toUpperCase() + __name.slice(1);
 
-				var __polyphen = " - Polyphen: "+i['polyphen'].replace("possibly","probably");
+				var __polyphen = " - "+i['polyphen'].replace("possibly","probably");
 
 				var __aux = jQuery.grep(__src,function(k){return(k['name']==__name)});
+                                var url = 'http://www.ncbi.nlm.nih.gov/pubmed/'+__pubmed;
+                                var link_name = __pubmed;
+                                if(__pubmed == "null"){
+                                  url = "https://hive.biochemistry.gwu.edu/biomuta/proteinview/"+__accession;
+                                  link_name = __accession;
+                                }
 				if(__aux.length==0 && __pubmed.indexOf(';')<0 ) __src.push({
 					disease:true,
 					name:__name,
-					xrefs:[{id:__pubmed,name:'BioMuta DB'+__polyphen,url:'http://www.ncbi.nlm.nih.gov/pubmed/'+__pubmed}]
+					xrefs:[{id:link_name,name:'BioMuta DB'+__polyphen,url:url}]
 				});
 				if(__mut['association'].length == 0) __mut['association'] = null;
 			}else{
@@ -153,13 +159,19 @@ var add_biomuta  =  function(__d){
 				}
 				__name = __name.charAt(0).toUpperCase() + __name.slice(1);
 
-				var __polyphen = " - Polyphen: "+i['polyphen'].replace("possibly","probably");
+				var __polyphen = " - "+i['polyphen'].replace("possibly","probably");
 
 				var __aux = jQuery.grep(__src,function(k){return(k['name']==__name)});
+                                var url = 'http://www.ncbi.nlm.nih.gov/pubmed/'+__pubmed;
+                                var link_name = __pubmed;
+                                if(__pubmed == "null"){
+                                  url = "https://hive.biochemistry.gwu.edu/biomuta/proteinview/"+__accession;
+                                  link_name = __accession;
+                                }
 				if(__aux.length==0 && __pubmed.indexOf(';')<0 ) __src.push({
 					disease:true,
 					name:__name,
-					xrefs:[{id:__pubmed,name:'BioMuta DB'+__polyphen,url:'http://www.ncbi.nlm.nih.gov/pubmed/'+__pubmed}]
+					xrefs:[{id:link_name,name:'BioMuta DB'+__polyphen,url:url}]
 				});
 				if( __pubmed.indexOf(';')<0 ) d[ i['start'] ]['variants'].push( __new_mut );
 				n++;
@@ -582,19 +594,21 @@ var add_molprobity = function(){
       var n_model = top.n_model_main_frame-1;
       var chain = JSON.parse(  getParameterByName('alignment') )['chain'];
 
-      var data = [];
-      var rama = top.$COMPUTED_FEATURES[pdb]['molprobity']['rama'][n_model][chain]
-      if(rama && rama.length >0) data =  data.concat(rama);
-      var omega = top.$COMPUTED_FEATURES[pdb]['molprobity']['omega'][n_model][chain]
-      if(omega && omega.length >0) data =  data.concat(omega);
-      var rota= top.$COMPUTED_FEATURES[pdb]['molprobity']['rota'][n_model][chain]
-      if(rota && rota.length >0) data =  data.concat(rota);
+      if( top.$COMPUTED_FEATURES[pdb]['molprobity'] ){
+        var data = [];
+        var rama = top.$COMPUTED_FEATURES[pdb]['molprobity']['rama'][n_model][chain]
+        if(rama && rama.length >0) data =  data.concat(rama);
+        var omega = top.$COMPUTED_FEATURES[pdb]['molprobity']['omega'][n_model][chain]
+        if(omega && omega.length >0) data =  data.concat(omega);
+        var rota= top.$COMPUTED_FEATURES[pdb]['molprobity']['rota'][n_model][chain]
+        if(rota && rota.length >0) data =  data.concat(rota);
 
-      if(data && data.length >0){
-        var molprobity = ["MOLPROBITY",data];
-        feature_viewer.drawCategories([molprobity],feature_viewer);
-        feature_viewer.data.push(molprobity);
-        add_highlight_all();       
+        if(data && data.length >0){
+          var molprobity = ["MOLPROBITY",data];
+          feature_viewer.drawCategories([molprobity],feature_viewer);
+          feature_viewer.data.push(molprobity);
+          add_highlight_all();       
+        }
       }
 
       if("n_sources" in $LOG.protein){
@@ -937,7 +951,14 @@ var add_psa_interface = function(){
       if($LOG.protein['n_sources']==0)remove_loading_icon();
     }
     add_highlight_all();
-    if( top.$COMPUTED_FEATURES[pdb]['molprobity'] )add_molprobity();
+    if( top.$COMPUTED_FEATURES[pdb]['molprobity'] ){
+      add_molprobity();
+    }else{
+      if("n_sources" in $LOG.protein){
+        $LOG.protein['n_sources']--;
+        if($LOG.protein['n_sources']==0)remove_loading_icon();
+      }     
+    }
   }else{
     var interface_url = "/compute/biopython/interface/"+pdb;
     $LOG.protein['psa'] = {
@@ -1097,26 +1118,108 @@ function prepare_uploaded_data(){
   var aux = [ ["PDBchain",PDBchain], ["acc",uniprot]  ];
 
   aux.forEach(function( i ){
-    console.log(i);
     if( top.$UPLOADED_DATA[ i[0] ][ i[1] ] ){
       $j.each( top.$UPLOADED_DATA[ i[0] ][ i[1] ], function( track_name, info ) {
         if(info.visualization_type=="continuous"){
           uploaded_data[ track_name ] = continuous_data(info.data);
-        }else{
+        }else if(info.visualization_type != "variants"){
           if(!uploaded_data[track_name]){
             uploaded_data[track_name] = info.data;
           }else{
             uploaded_data[track_name] = uploaded_data[track_name].concat( info.data );
           }
         }
-        console.log(track_name);
-        console.log(info);
       });
     }
   });
 } 
 
-module.exports = { add_uploaded_data:add_uploaded_data, uploaded_data:uploaded_data };
+var add_uploaded_variants = function(d){
+  var PDBchain = __alignment.pdb+":"+__alignment.chain;
+  PDBchain = PDBchain.replace(/_dot_/g,".");
+  var uniprot = __alignment.uniprot;
+  if(uploaded_data){
+    var aux = [ ["PDBchain",PDBchain], ["acc",uniprot]  ];
+    aux.forEach(function( i ){
+      if( top.$UPLOADED_DATA[ i[0] ][ i[1] ] ){
+        $j.each( top.$UPLOADED_DATA[ i[0] ][ i[1] ], function( track_name, info ) {
+          if(info.visualization_type=="variants"){
+            process_variants(d,info);
+          }
+        });
+      }
+    });
+  }
+
+  function process_variants(__d,info){
+                var d = __d[0][1];
+                var n = 0;
+		info.data.forEach(function(i){
+			if( !d[ i['begin'] ] ) return;
+			var __aux = jQuery.grep(d[ i['begin'] ]['variants'],function(j){ return(j['alternativeSequence']==i['variation']) });
+			var __mut = __aux[0];
+			if( __mut ){
+                                __mut.externalFlag = true;
+                                if(__mut.sourceType=="large_scale_study") __mut["color"] = "#FF0000";
+
+				if(!__mut['association'])__mut['association']=[];
+				var __src = __mut['association'];
+
+				var __name = i['disease'];
+				if(__name){
+                                  __name = __name.charAt(0).toUpperCase() + __name.slice(1);
+                                }else{
+                                  __name = "NA";
+                                }
+
+				var __polyphen = "";
+                                if(i['polyphen']) __polyphen = " - Polyphen: "+i['polyphen'];
+
+				__src.push({
+					disease:true,
+					name:__name,
+					xrefs:[{name:'External Variant '+__polyphen}]
+				});
+				if(__mut['association'].length == 0) __mut['association'] = null;
+			}else{
+                                variants_extended = true;
+				var __new_mut = {
+					internalId:"extm_"+n,
+					type: "VARIANT",
+					wildType: i['wildtype'],
+					alternativeSequence:i['variation'],
+					begin:i['begin'],
+					end:i['begin'],
+					association:[],
+                                        externalFlag:true,
+                                        color:"#FF0000"
+				};
+				if(i['original'])__new_mut['wildType']=i['original'];
+
+				var __src = __new_mut['association'];
+				var __name = i['disease'];
+				if(__name){
+                                  __name = __name.charAt(0).toUpperCase() + __name.slice(1);
+                                }else{
+                                  __name = "NA";
+                                }
+
+				var __polyphen = "";
+                                if(i['polyphen']) __polyphen = " - Polyphen: "+i['polyphen'];
+
+				__src.push({
+					disease:true,
+					name:__name,
+					xrefs:[{name:'External Variant '+__polyphen}]
+				});
+                                d[ i['begin'] ]['variants'].push( __new_mut );
+				n++;
+			}
+		});
+  }
+};
+
+module.exports = { add_uploaded_data:add_uploaded_data, uploaded_data:uploaded_data, add_uploaded_variants:add_uploaded_variants };
 
 },{"./continuous_data":21}],20:[function(require,module,exports){
 "use strict";
@@ -1130,8 +1233,8 @@ var variant_menu = function (){
       $j(this).addClass("unactive_disease");
       var k = $j(this).attr("title");
       $j(this).html("&#9675; "+k);
-      my_variant_viewer.reset();
     });
+    my_variant_viewer.reset();
   });
   $j('.up_pftv_inner-icon-container a').before("<a class=\"up_pftv_icon-button up_pftv_icon-location variant_std_menu\" style=\"cursor:pointer;\" title=\"Change filter: disease/cosequence\"></a>");
   $j(".variant_std_menu").click(function(i){
@@ -1874,6 +1977,7 @@ var extend_categories = require('./extend_categories');
 var __add_uploaded_data = require('./add_uploaded_data');
 var add_uploaded_data = __add_uploaded_data.add_uploaded_data;
 var uploaded_data = __add_uploaded_data.uploaded_data;
+var add_uploaded_variants = __add_uploaded_data.add_uploaded_variants;
 var get_all_external_soruces = require('./get_all_external_soruces');
 var build_variant_menu = require('./build_variant_menu');
 var variant_menu = build_variant_menu.variant_menu;
@@ -1918,6 +2022,7 @@ var extend_features =  function(features){
 
 var extend_variants = function(features){
 	add_biomuta(features);
+        add_uploaded_variants(features);
         add_disease_menu(features);
 };
 

@@ -5,6 +5,7 @@ var extend_categories = require('./extend_categories');
 var __add_uploaded_data = require('./add_uploaded_data');
 var add_uploaded_data = __add_uploaded_data.add_uploaded_data;
 var uploaded_data = __add_uploaded_data.uploaded_data;
+var add_uploaded_variants = __add_uploaded_data.add_uploaded_variants;
 var get_all_external_soruces = require('./get_all_external_soruces');
 var build_variant_menu = require('./build_variant_menu');
 var variant_menu = build_variant_menu.variant_menu;
@@ -49,6 +50,7 @@ var extend_features =  function(features){
 
 var extend_variants = function(features){
 	add_biomuta(features);
+        add_uploaded_variants(features);
         add_disease_menu(features);
 };
 

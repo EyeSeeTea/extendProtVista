@@ -19,13 +19,19 @@ var add_biomuta  =  function(__d){
 				}
 				__name = __name.charAt(0).toUpperCase() + __name.slice(1);
 
-				var __polyphen = " - Polyphen: "+i['polyphen'].replace("possibly","probably");
+				var __polyphen = " - "+i['polyphen'].replace("possibly","probably");
 
 				var __aux = jQuery.grep(__src,function(k){return(k['name']==__name)});
+                                var url = 'http://www.ncbi.nlm.nih.gov/pubmed/'+__pubmed;
+                                var link_name = __pubmed;
+                                if(__pubmed == "null"){
+                                  url = "https://hive.biochemistry.gwu.edu/biomuta/proteinview/"+__accession;
+                                  link_name = __accession;
+                                }
 				if(__aux.length==0 && __pubmed.indexOf(';')<0 ) __src.push({
 					disease:true,
 					name:__name,
-					xrefs:[{id:__pubmed,name:'BioMuta DB'+__polyphen,url:'http://www.ncbi.nlm.nih.gov/pubmed/'+__pubmed}]
+					xrefs:[{id:link_name,name:'BioMuta DB'+__polyphen,url:url}]
 				});
 				if(__mut['association'].length == 0) __mut['association'] = null;
 			}else{
@@ -51,13 +57,19 @@ var add_biomuta  =  function(__d){
 				}
 				__name = __name.charAt(0).toUpperCase() + __name.slice(1);
 
-				var __polyphen = " - Polyphen: "+i['polyphen'].replace("possibly","probably");
+				var __polyphen = " - "+i['polyphen'].replace("possibly","probably");
 
 				var __aux = jQuery.grep(__src,function(k){return(k['name']==__name)});
+                                var url = 'http://www.ncbi.nlm.nih.gov/pubmed/'+__pubmed;
+                                var link_name = __pubmed;
+                                if(__pubmed == "null"){
+                                  url = "https://hive.biochemistry.gwu.edu/biomuta/proteinview/"+__accession;
+                                  link_name = __accession;
+                                }
 				if(__aux.length==0 && __pubmed.indexOf(';')<0 ) __src.push({
 					disease:true,
 					name:__name,
-					xrefs:[{id:__pubmed,name:'BioMuta DB'+__polyphen,url:'http://www.ncbi.nlm.nih.gov/pubmed/'+__pubmed}]
+					xrefs:[{id:link_name,name:'BioMuta DB'+__polyphen,url:url}]
 				});
 				if( __pubmed.indexOf(';')<0 ) d[ i['start'] ]['variants'].push( __new_mut );
 				n++;

@@ -36,19 +36,21 @@ var add_molprobity = function(){
       var n_model = top.n_model_main_frame-1;
       var chain = JSON.parse(  getParameterByName('alignment') )['chain'];
 
-      var data = [];
-      var rama = top.$COMPUTED_FEATURES[pdb]['molprobity']['rama'][n_model][chain]
-      if(rama && rama.length >0) data =  data.concat(rama);
-      var omega = top.$COMPUTED_FEATURES[pdb]['molprobity']['omega'][n_model][chain]
-      if(omega && omega.length >0) data =  data.concat(omega);
-      var rota= top.$COMPUTED_FEATURES[pdb]['molprobity']['rota'][n_model][chain]
-      if(rota && rota.length >0) data =  data.concat(rota);
+      if( top.$COMPUTED_FEATURES[pdb]['molprobity'] ){
+        var data = [];
+        var rama = top.$COMPUTED_FEATURES[pdb]['molprobity']['rama'][n_model][chain]
+        if(rama && rama.length >0) data =  data.concat(rama);
+        var omega = top.$COMPUTED_FEATURES[pdb]['molprobity']['omega'][n_model][chain]
+        if(omega && omega.length >0) data =  data.concat(omega);
+        var rota= top.$COMPUTED_FEATURES[pdb]['molprobity']['rota'][n_model][chain]
+        if(rota && rota.length >0) data =  data.concat(rota);
 
-      if(data && data.length >0){
-        var molprobity = ["MOLPROBITY",data];
-        feature_viewer.drawCategories([molprobity],feature_viewer);
-        feature_viewer.data.push(molprobity);
-        add_highlight_all();       
+        if(data && data.length >0){
+          var molprobity = ["MOLPROBITY",data];
+          feature_viewer.drawCategories([molprobity],feature_viewer);
+          feature_viewer.data.push(molprobity);
+          add_highlight_all();       
+        }
       }
 
       if("n_sources" in $LOG.protein){
