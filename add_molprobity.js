@@ -38,11 +38,20 @@ var add_molprobity = function(){
 
       if( top.$COMPUTED_FEATURES[pdb]['molprobity'] ){
         var data = [];
-        var rama = top.$COMPUTED_FEATURES[pdb]['molprobity']['rama'][n_model][chain]
+        var rama;
+        if( 'rama' in top.$COMPUTED_FEATURES[pdb]['molprobity'] ){
+          rama = top.$COMPUTED_FEATURES[pdb]['molprobity']['rama'][n_model][chain]
+        }
         if(rama && rama.length >0) data =  data.concat(rama);
-        var omega = top.$COMPUTED_FEATURES[pdb]['molprobity']['omega'][n_model][chain]
+        var omega;
+        if( 'omega' in top.$COMPUTED_FEATURES[pdb]['molprobity'] ){
+          omega = top.$COMPUTED_FEATURES[pdb]['molprobity']['omega'][n_model][chain]
+        }
         if(omega && omega.length >0) data =  data.concat(omega);
-        var rota= top.$COMPUTED_FEATURES[pdb]['molprobity']['rota'][n_model][chain]
+        var rota;
+        if( 'rota' in top.$COMPUTED_FEATURES[pdb]['molprobity']){
+          rota= top.$COMPUTED_FEATURES[pdb]['molprobity']['rota'][n_model][chain]
+        }
         if(rota && rota.length >0) data =  data.concat(rota);
 
         if(data && data.length >0){
