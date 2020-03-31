@@ -1,6 +1,7 @@
 "use strict";
 var handle_async_data = require('./handle_async_data');
 var add_psa_interface = require('./add_psa_interface');
+var add_emres_interface = require('./add_emres_interface');
 //var add_molprobity = require('./add_molprobity');
 
 var listURL;
@@ -110,6 +111,7 @@ var get_all_async_soruces = function(){
   if(!imported_flag){
     $LOG.protein['n_sources'] += 2;
     add_psa_interface();
+    add_emres_interface();
     //add_molprobity();
   }
   get_async_data(__allURL, __external_data);
