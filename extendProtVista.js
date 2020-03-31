@@ -13,6 +13,7 @@ var update_diseases = build_variant_menu.update_diseases;
 var add_disease_menu = build_variant_menu.add_disease_menu;
 var add_evidences = require('./add_evidences');
 var add_asa_residues = require('./add_asa_residues');
+var add_em_resolution = require('./add_em_resolution');
 var add_binding_residues = require('./add_binding_residues');
 var add_coverage = require('./add_coverage');
 var add_sequence_coverage = require('./add_sequence_coverage');
@@ -66,6 +67,7 @@ module.exports = {
   uploaded_data:uploaded_data,
   check_coordinates:check_coordinates,
   add_binding_residues:add_binding_residues,
-  add_asa_residues:add_asa_residues
+  add_asa_residues:add_asa_residues,
+  add_em_resolution: add_em_resolution,
 };
 

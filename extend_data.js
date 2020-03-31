@@ -18,3 +18,4 @@ var uploaded_data = extendProtVista.uploaded_data;
 var check_coordinates = extendProtVista.check_coordinates;
 var add_binding_residues = extendProtVista.add_binding_residues;
 var add_asa_residues = extendProtVista.add_asa_residues;
+var add_em_resolution = extendProtVista.add_em_resolution;
