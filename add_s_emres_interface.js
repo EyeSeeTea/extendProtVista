@@ -71,7 +71,7 @@ var add_s_emres_interface = function(){
       success: function(data){
         if(!top.$COMPUTED_FEATURES[pdb])top.$COMPUTED_FEATURES[pdb] = {};
         if("error" in data){
-          top.em_residues = null;
+          top.em_resolution = null;
           $LOG.protein['psa']['status'] = 'error';
           var t2 = performance.now();
           var time_ = (t2-t1)/1000;
@@ -79,8 +79,8 @@ var add_s_emres_interface = function(){
           return;
         }
 
-        top.em_residues = data['asa'];
-        top.$COMPUTED_FEATURES[pdb]['em_resolution'] = top.em_residues;
+        top.em_resolution = data['asa'];
+        top.$COMPUTED_FEATURES[pdb]['em_resolution'] = top.em_resolution;
 
         var asa = add_em_resolution();
         feature_viewer.drawCategories([asa],feature_viewer);
@@ -90,7 +90,7 @@ var add_s_emres_interface = function(){
         $LOG.protein['psa']['status'] = 'success';
       },
       error: function(){
-        top.em_residues = null;
+        top.em_resolution = null;
         $LOG.protein['psa']['status'] = 'error';
       }
     }).always(function(){
