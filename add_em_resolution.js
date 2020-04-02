@@ -35,7 +35,7 @@ var add_em_resolution = function (_n){
                                                      end: i[0], 
                                                      score:i[1], 
                                                      internalId:'asa_'+n, 
-                                                     description:'<b style=\"color:grey;\">Relative accessible surface area</b><br/>Residue accesibility '+rasa+'%'
+                                                     description:'<b style=\"color:grey;\">Local resolution value:</b><br/>'+rasa
           }];
         }
         n++;
