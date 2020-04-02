@@ -41,7 +41,8 @@ var add_s_emres_interface = function(){
     path = alignment['path'];
   }
   if( top.$COMPUTED_FEATURES[pdb] ){
-    top.em_resolution = top.$COMPUTED_FEATURES[pdb]['em_resolution'];
+    // Use asa residues. Change this once we have our own data source
+    top.em_resolution = top.$COMPUTED_FEATURES[pdb]['asa_residues'];
     var asa = add_em_resolution();
     feature_viewer.drawCategories([asa],feature_viewer);
     feature_viewer.data.push(asa);
