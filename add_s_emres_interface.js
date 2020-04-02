@@ -32,7 +32,7 @@ var add_s_emres_interface = function(){
       };
       if("n_sources" in $LOG.protein){
         $LOG.protein['n_sources']-=2;
-        if($LOG.protein['n_sources']==0)remove_loading_icon();
+        if($LOG.protein['n_sources']===0)remove_loading_icon();
       }
     return;
   }
@@ -49,7 +49,7 @@ var add_s_emres_interface = function(){
 
     if("n_sources" in $LOG.protein){
       $LOG.protein['n_sources']--;
-      if($LOG.protein['n_sources']==0)remove_loading_icon();
+      if($LOG.protein['n_sources']===0)remove_loading_icon();
     }
     add_highlight_all();
   }else{
@@ -96,11 +96,11 @@ var add_s_emres_interface = function(){
     }).always(function(){
       var t2 = performance.now();
       var time_ = (t2-t1)/1000;
-      if($LOG.protein['psa']['status'] == 'success')console.log("%c Finished "+interface_url+" "+time_.toString().substring(0,4)+"s", 'color:green;');
+      if($LOG.protein['psa']['status'] === 'success')console.log("%c Finished "+interface_url+" "+time_.toString().substring(0,4)+"s", 'color:green;');
       $LOG.protein['psa']['cost'] = time_.toString().substring(0,4);
       if("n_sources" in $LOG.protein){
         $LOG.protein['n_sources']--;
-        if($LOG.protein['n_sources']==0)remove_loading_icon();
+        if($LOG.protein['n_sources']===0)remove_loading_icon();
       }
     });
   }
