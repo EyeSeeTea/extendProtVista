@@ -1,8 +1,6 @@
 "use strict";
 var add_em_resolution = require('./add_em_resolution');
-var add_binding_residues = require('./add_binding_residues');
 var highlight_all = require('./highlight_all');
-var add_molprobity = require('./add_molprobity');
 var add_highlight_all = highlight_all.add_highlight_all;
 
 
@@ -43,35 +41,20 @@ var add_emres_interface = function(){
     path = alignment['path'];
   }
   if( top.$COMPUTED_FEATURES[pdb] ){
-    top.binding_residues = top.$COMPUTED_FEATURES[pdb]['binding_residues'];
-    top.asa_residues = top.$COMPUTED_FEATURES[pdb]['asa_residues'];
+    top.em_resolution = top.$COMPUTED_FEATURES[pdb]['em_resolution'];
     var asa = add_em_resolution();
-    var bs = add_binding_residues();
-    if(bs){
-      feature_viewer.drawCategories([asa,bs],feature_viewer);
-      feature_viewer.data.push(asa);
-      feature_viewer.data.push(bs);
-    }else{
-      feature_viewer.drawCategories([asa],feature_viewer);
-      feature_viewer.data.push(asa);
-    }
+    feature_viewer.drawCategories([asa],feature_viewer);
+    feature_viewer.data.push(asa);
+
     if("n_sources" in $LOG.protein){
       $LOG.protein['n_sources']--;
       if($LOG.protein['n_sources']==0)remove_loading_icon();
     }
     add_highlight_all();
-    if( top.$COMPUTED_FEATURES[pdb]['molprobity'] ){
-      add_molprobity();
-    }else{
-      if("n_sources" in $LOG.protein){
-        $LOG.protein['n_sources']--;
-        if($LOG.protein['n_sources']==0)remove_loading_icon();
-      }     
-    }
   }else{
     var interface_url = "/compute/biopython/interface/"+pdb;
     $LOG.protein['psa'] = {
-      'description':'Computing EM resolution',
+      'description':'Getting EM resolution',
       'command':'GET '+interface_url,
       'status':'running'
     };
@@ -87,7 +70,6 @@ var add_emres_interface = function(){
       success: function(data){
         if(!top.$COMPUTED_FEATURES[pdb])top.$COMPUTED_FEATURES[pdb] = {};
         if("error" in data){
-          top.binding_residues = null;
           top.em_residues = null;
           $LOG.protein['psa']['status'] = 'error';
           var t2 = performance.now();
@@ -95,30 +77,18 @@ var add_emres_interface = function(){
           console.log("%c Finished "+interface_url+" "+time_.toString().substring(0,4)+"s", 'color:red;');
           return;
         }
-        top.binding_residues = data['interface'];
-        top.$COMPUTED_FEATURES[pdb]['binding_residues'] = top.binding_residues;
 
         top.em_residues = data['asa'];
-        top.$COMPUTED_FEATURES[pdb]['asa_residues'] = top.em_residues;
-
-        top.rri_residues = data['rri'];
-        top.$COMPUTED_FEATURES[pdb]['rri'] = data['rri'];
+        top.$COMPUTED_FEATURES[pdb]['em_resolution'] = top.em_residues;
 
         var asa = add_em_resolution();
-        var bs = add_binding_residues();
-        if(bs){
-          feature_viewer.drawCategories([asa,bs],feature_viewer);
-          feature_viewer.data.push(asa);
-          feature_viewer.data.push(bs);
-        }else{
-          feature_viewer.drawCategories([asa],feature_viewer);
-          feature_viewer.data.push(asa);
-        }
+        feature_viewer.drawCategories([asa],feature_viewer);
+        feature_viewer.data.push(asa);
+
         add_highlight_all();
         $LOG.protein['psa']['status'] = 'success';
       },
       error: function(){
-        top.binding_residues = null;
         top.em_residues = null;
         $LOG.protein['psa']['status'] = 'error';
       }
@@ -131,7 +101,6 @@ var add_emres_interface = function(){
         $LOG.protein['n_sources']--;
         if($LOG.protein['n_sources']==0)remove_loading_icon();
       }
-      add_molprobity();
     });
   }
 };
