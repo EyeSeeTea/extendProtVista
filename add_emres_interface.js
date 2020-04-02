@@ -1,5 +1,5 @@
 "use strict";
-var add_asa_residues = require('./add_asa_residues');
+var add_em_resolution = require('./add_em_resolution');
 var add_binding_residues = require('./add_binding_residues');
 var highlight_all = require('./highlight_all');
 var add_molprobity = require('./add_molprobity');
@@ -45,7 +45,7 @@ var add_emres_interface = function(){
   if( top.$COMPUTED_FEATURES[pdb] ){
     top.binding_residues = top.$COMPUTED_FEATURES[pdb]['binding_residues'];
     top.asa_residues = top.$COMPUTED_FEATURES[pdb]['asa_residues'];
-    var asa = add_asa_residues();
+    var asa = add_em_resolution();
     var bs = add_binding_residues();
     if(bs){
       feature_viewer.drawCategories([asa,bs],feature_viewer);
@@ -71,7 +71,7 @@ var add_emres_interface = function(){
   }else{
     var interface_url = "/compute/biopython/interface/"+pdb;
     $LOG.protein['psa'] = {
-      'description':'Computing ASA and binding sites data',
+      'description':'Computing EM resolution',
       'command':'GET '+interface_url,
       'status':'running'
     };
@@ -88,7 +88,7 @@ var add_emres_interface = function(){
         if(!top.$COMPUTED_FEATURES[pdb])top.$COMPUTED_FEATURES[pdb] = {};
         if("error" in data){
           top.binding_residues = null;
-          top.asa_residues = null;
+          top.em_residues = null;
           $LOG.protein['psa']['status'] = 'error';
           var t2 = performance.now();
           var time_ = (t2-t1)/1000;
@@ -98,13 +98,13 @@ var add_emres_interface = function(){
         top.binding_residues = data['interface'];
         top.$COMPUTED_FEATURES[pdb]['binding_residues'] = top.binding_residues;
 
-        top.asa_residues = data['asa'];
-        top.$COMPUTED_FEATURES[pdb]['asa_residues'] = top.asa_residues;
+        top.em_residues = data['asa'];
+        top.$COMPUTED_FEATURES[pdb]['asa_residues'] = top.em_residues;
 
         top.rri_residues = data['rri'];
         top.$COMPUTED_FEATURES[pdb]['rri'] = data['rri'];
 
-        var asa = add_asa_residues();
+        var asa = add_em_resolution();
         var bs = add_binding_residues();
         if(bs){
           feature_viewer.drawCategories([asa,bs],feature_viewer);
@@ -119,7 +119,7 @@ var add_emres_interface = function(){
       },
       error: function(){
         top.binding_residues = null;
-        top.asa_residues = null;
+        top.em_residues = null;
         $LOG.protein['psa']['status'] = 'error';
       }
     }).always(function(){

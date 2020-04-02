@@ -1,12 +1,15 @@
 "use strict";
 
 var add_em_resolution = function (_n){
+  // returns asa_res, a collection to hold protvista like data:[RESIDUE_ASA, [{type:"VARIANT", pos:0, variants:[]})
+  // variants are filled with top.asa_residues coming from an ajax request
   var asa_res = null;
   if( !imported_flag && top.asa_residues ){
     var n_model = top.n_model_main_frame-1;
     if(_n)n_model = _n-1;
-    var asa_res = ["RESIDUE_ASA",[]]; 
+    var asa_res = ["EM_RESOLUTION",[]];
     var n = 1;
+    // Prepares the collection for a later completion
     for(var i = 0;i<__alignment.uniprotLength+1;i++){
       var __f = { type: "VARIANT", pos: i, variants: [] };
       asa_res[1].push(__f);
@@ -15,6 +18,7 @@ var add_em_resolution = function (_n){
     var chain = JSON.parse(  getParameterByName('alignment') )['chain'];
     if(top.asa_residues[n_model][chain]){
       var n = 0;
+      // For each asa_residues (added by the caller of this function) from an ajax request.
       top.asa_residues[n_model][chain].forEach(function(i){
         var r = parseInt(i[1]*255);
         if(r>255)r=255;
@@ -23,6 +27,7 @@ var add_em_resolution = function (_n){
         var color = 'rgb('+r+',0,'+b+')';
         var rasa = parseFloat(i[1]*100).toFixed(2);
         if(asa_res[1][ parseInt(i[0]) ]){
+          // Fill empty variants attribute at asa_res[0][pos].variants
           asa_res[1][ parseInt(i[0]) ].variants = [{ color:color, 
                                                      alternativeSequence:'', 
                                                      type:'measure', 
