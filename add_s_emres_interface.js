@@ -4,7 +4,7 @@ var highlight_all = require('./highlight_all');
 var add_highlight_all = highlight_all.add_highlight_all;
 
 
-var add_emres_interface = function(){
+var add_s_emres_interface = function(){
 
   var $LOG = { 'protein':{}, 'gene':{}, 'interaction:':{} };
   if(top.$LOG){
@@ -121,5 +121,5 @@ function getParameterByName(name, url) {
     return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
-module.exports = add_emres_interface;
+module.exports = add_s_emres_interface;
 

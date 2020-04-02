@@ -1,7 +1,7 @@
 "use strict";
 var handle_async_data = require('./handle_async_data');
 var add_psa_interface = require('./add_psa_interface');
-var add_emres_interface = require('./add_emres_interface');
+var add_emres_interface = require('./add_s_emres_interface');
 //var add_molprobity = require('./add_molprobity');
 
 var listURL;
