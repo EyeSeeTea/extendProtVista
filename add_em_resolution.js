@@ -3,8 +3,8 @@
 var add_em_resolution = function (_n){
   // returns asa_res, a collection to hold protvista like data:[EM_RESOLUTION, [{type:"VARIANT", pos:0, variants:[]})
   // variants are filled with top.em_resolution coming from an ajax request
-  var asa_res = null;
-  if( !imported_flag && top.asa_residues ){
+  var em_res = null;
+  if( !imported_flag && top.em_resolution ){
     var n_model = top.n_model_main_frame-1;
     if(_n)n_model = _n-1;
     var em_res = ["EM_RESOLUTION",[]];
@@ -42,7 +42,7 @@ var add_em_resolution = function (_n){
       });
     }
   }
-  return asa_res;
+  return em_res;
 };
 
 function getParameterByName(name, url) {
