@@ -1,6 +1,6 @@
 "use strict";
 
-var add_em_resolution = function (_n){
+const add_em_resolution = function (_n) {
   // returns asa_res, a collection to hold protvista like data:[EM_RESOLUTION, [{type:"VARIANT", pos:0, variants:[]})
   // variants are filled with top.em_resolution coming from an ajax request
   //   EXAMPLE
@@ -15,21 +15,21 @@ var add_em_resolution = function (_n){
   // url      --> "/compute/biopython/interface/6crv" (pdb varible)
   // response --> complex structure!
   // Try local static data
-  var sData = '{"sequence": "MLPGLALLLLAAWTARALEVPTDGNAGLLAEPQIAMFCGRLNMHMNVQNGKWDS", "features": [ { "category": "MAP_RESOLUTION", "type": "LOCAL_RESOLUTION", "begin": "723", "end": "723", "value": 3.35 },{ "category": "MAP_RESOLUTION", "type": "LOCAL_RESOLUTION", "begin": "725", "end": "725", "value": 4.21 }, { "category": "MAP_RESOLUTION", "type": "LOCAL_RESOLUTION", "description": "primary tissue(s): large intestine", "begin": "727", "end": "727", "value": 3.75 } ]}';
-  var resData = JSON.parse(sData)
+  const sData = '{"sequence": "MLPGLALLLLAAWTARALEVPTDGNAGLLAEPQIAMFCGRLNMHMNVQNGKWDS", "features": [ { "category": "MAP_RESOLUTION", "type": "LOCAL_RESOLUTION", "begin": "723", "end": "723", "value": 3.35 },{ "category": "MAP_RESOLUTION", "type": "LOCAL_RESOLUTION", "begin": "725", "end": "725", "value": 4.21 }, { "category": "MAP_RESOLUTION", "type": "LOCAL_RESOLUTION", "description": "primary tissue(s): large intestine", "begin": "727", "end": "727", "value": 3.75 } ]}';
+  const resData = JSON.parse(sData);
 
-  var em_res = null;
-  if( !imported_flag ){
-    var n_model = top.n_model_main_frame-1; //Model index: 1, 2, 3
-    if(_n)n_model = _n-1;
-    var em_res = ["EM_RESOLUTION",[]];
-    var n = 1;
+  let em_res = null;
+  if (!imported_flag) {
+    let n_model = top.n_model_main_frame - 1; //Model index: 1, 2, 3
+    if (_n) n_model = _n - 1;
+    em_res = ["EM_RESOLUTION", []];
+    let n = 1;
 
     // Prepares the collection for a later completion
-    for(var i = 0;i<__alignment.uniprotLength+1;i++){
-      var __f = { type: "VARIANT", pos: i, variants: [] };
+    for (let i = 0; i < __alignment.uniprotLength + 1; i++) {
+      const __f = {type: "VARIANT", pos: i, variants: []};
       em_res[1].push(__f);
-      n++;     
+      n++;
     }
     // alignment has:
     // {  "pdbList":["6crv"],
@@ -45,32 +45,33 @@ var add_em_resolution = function (_n){
     //  }
 
     // overcomplicated?? var chain = JSON.parse(  getParameterByName('alignment') )['chain']; // Get the chain A, B, C. A for the example.
-    var chain = __alignment.chain ; // Get the chain A, B, C. A for the example.
+    const chain = __alignment.chain; // Get the chain A, B, C. A for the example.
 
     // If data from server has the chain: ASK data proposed has a sequence  but not a chain name (A)
-    if(true || top.em_resolution[n_model][chain]){
-      var n = 0;
+    if (true || top.em_resolution[n_model][chain]) {
+      let n = 0;
       // For each em_resolution (added by the caller of this function) from an ajax request.
-      resData["features"].forEach(function(i){
+      resData["features"].forEach(function (i) {
 
-        var pos = i.begin
+        const pos = i.begin;
 
         // var r = parseInt(i[1]*255);
         // if(r>255)r=255;
         // var b = 255-r;
         // if(b<0)b = 0;
         // var color = 'rgb('+r+',0,'+b+')';
-        var resolution = i.value;
-        var color = getColorFromResolution(resolution);
+        const resolution = i.value;
+        const color = getColorFromResolution(resolution);
         // Fill empty variants
-        em_res[1][ parseInt(pos) ].variants = [{ color:color,
-                                                     alternativeSequence:'', 
-                                                     type:'measure', 
-                                                     begin: pos,
-                                                     end: pos,
-                                                     score:resolution,
-                                                     internalId:'res_'+n,
-                                                     description:'<b style=\"color:grey;\">Local resolution value:</b><br/>'+resolution
+        em_res[1][parseInt(pos)].variants = [{
+          color: color,
+          alternativeSequence: '',
+          type: 'measure',
+          begin: pos,
+          end: pos,
+          score: resolution,
+          internalId: 'res_' + n,
+          description: '<b style=\"color:grey;\">Local resolution value:</b><br/>' + resolution
         }];
 
         n++;
@@ -82,15 +83,15 @@ var add_em_resolution = function (_n){
 
 function getColorFromResolution(resolution){
   /* Return the color that corresponds to resolution value*/
-    var stopColors = ["#FFFFFF","#000080", "#0000FF", "#00FFFF",
-      "#00FF00", "#FFFF00", "#FF8800", "#FF0000"]
+  let stopColors = ["#FFFFFF", "#000080", "#0000FF", "#00FFFF",
+                    "#00FF00", "#FFFF00", "#FF8800", "#FF0000"];
 
   // Get resolution integer boundaries
-  var highRes = Math.ceil(resolution);
-  var lowRes = highRes +1;
+  let highRes = Math.ceil(resolution);
+  let lowRes = highRes +1;
 
-  var highResColor = stopColors[highRes];
-  var lowResColor = stopColors[lowRes];
+  let highResColor = stopColors[highRes];
+  const lowResColor = stopColors[lowRes];
 
   // get the
   return getColorBetween(highResColor, lowResColor, resolution-highRes)
@@ -99,15 +100,15 @@ function getColorFromResolution(resolution){
 
 function getColorBetween(bottomColor, topColor, distanceFromBottom){
   // Returns the color between the 2 passed color at a certain distance (decimal value)
-  var c = "#";
-  for(var i = 0; i<3; i++) {
-    var subb = bottomColor.substring(1+2*i, 3+2*i);
-    var subt = topColor.substring(1+2*i, 3+2*i);
-    var vb = parseInt(subb, 16);
-    var vt = parseInt(subt, 16);
-    var v = vb + Math.floor((vt - vb) * distanceFromBottom);
-    var sub = v.toString(16).toUpperCase();
-    var padsub = ('0'+sub).slice(-2);
+  let c = "#";
+  for(let i = 0; i<3; i++) {
+    const subb = bottomColor.substring(1 + 2 * i, 3 + 2 * i);
+    const subt = topColor.substring(1 + 2 * i, 3 + 2 * i);
+    const vb = parseInt(subb, 16);
+    const vt = parseInt(subt, 16);
+    const v = vb + Math.floor((vt - vb) * distanceFromBottom);
+    const sub = v.toString(16).toUpperCase();
+    const padsub = ('0' + sub).slice(-2);
     c += padsub;
   }
   return c
