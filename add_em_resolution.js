@@ -78,7 +78,7 @@ const add_em_resolution = function (_n) {
           end: pos,
           score: resolution,
           internalId: 'res_' + n,
-          description: '<b style=\"color:grey;\">Local resolution value:</b><br/>' + resolution
+          description: '<b style=\"color:grey;\">Tests data randomly generated:</b><br/>' + resolution
         }];
 
         n++;
