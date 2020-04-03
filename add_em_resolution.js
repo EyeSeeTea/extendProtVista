@@ -58,16 +58,16 @@ const add_em_resolution = function (_n) {
     if (true || top.em_resolution[n_model][chain]) {
       let n = 0;
       // For each em_resolution (added by the caller of this function) from an ajax request.
-      resData["features"].forEach(function (i) {
+      //resData["features"].forEach(function (i) {
+      // Provisional: loop through em_res to have more data
+      em_res[1].forEach(function (i) {
+        // temporal
+        const resolution = (Math.random() * 6) + 1;
+        const pos = i.pos;
 
-        const pos = i.begin;
+        //const pos = i.begin;
+        //const resolution = i.value;
 
-        // var r = parseInt(i[1]*255);
-        // if(r>255)r=255;
-        // var b = 255-r;
-        // if(b<0)b = 0;
-        // var color = 'rgb('+r+',0,'+b+')';
-        const resolution = i.value;
         const color = getColorFromResolution(resolution);
         // Fill empty variants
         em_res[1][parseInt(pos)].variants = [{
