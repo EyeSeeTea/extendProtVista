@@ -17,7 +17,8 @@ const add_em_resolution = function (_n) {
   // Try local static data
   const sData = '{"sequence": "MLPGLALLLLAAWTARALEVPTDGNAGLLAEPQIAMFCGRLNMHMNVQNGKWDS", "features": [ ' +
     '{ "category": "MAP_RESOLUTION", "type": "LOCAL_RESOLUTION", "begin": "723", "end": "723", "value": 3.35 },' +
-    '{ "category": "MAP_RESOLUTION", "type": "LOCAL_RESOLUTION", "begin": "723", "end": "723", "value": 6.35 },' +
+    '{ "category": "MAP_RESOLUTION", "type": "LOCAL_RESOLUTION", "begin": "722", "end": "722", "value": 1.35 },' +
+    '{ "category": "MAP_RESOLUTION", "type": "LOCAL_RESOLUTION", "begin": "710", "end": "710", "value": 2.4 },' +
     '{ "category": "MAP_RESOLUTION", "type": "LOCAL_RESOLUTION", "begin": "700", "end": "700", "value": 10 },' +
     '{ "category": "MAP_RESOLUTION", "type": "LOCAL_RESOLUTION", "begin": "725", "end": "725", "value": 4.21 }, ' +
     '{ "category": "MAP_RESOLUTION", "type": "LOCAL_RESOLUTION", "description": "primary tissue(s): large intestine", "begin": "727", "end": "727", "value": 6.75 }' +
