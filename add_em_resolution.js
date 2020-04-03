@@ -95,7 +95,7 @@ function getColorFromResolution(resolution){
                     "#000000"];
 
   // Get resolution integer boundaries
-  let highRes = Math.ceil(resolution);
+  let highRes = Math.floor(resolution);
   let lowRes = highRes +1;
 
   const highResColor = stopColors.length < highRes ? stopColors[stopColors.length-1] : stopColors[highRes];
