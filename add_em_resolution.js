@@ -60,8 +60,8 @@ var add_em_resolution = function (_n){
         // var b = 255-r;
         // if(b<0)b = 0;
         // var color = 'rgb('+r+',0,'+b+')';
-        var color = "red";
         var resolution = i.value;
+        var color = getColorFromResolution(resolution);
         // Fill empty variants
         em_res[1][ parseInt(pos) ].variants = [{ color:color,
                                                      alternativeSequence:'', 
@@ -79,5 +79,38 @@ var add_em_resolution = function (_n){
   }
   return em_res;
 };
+
+function getColorFromResolution(resolution){
+  /* Return the color that corresponds to resolution value*/
+    var stopColors = ["#FFFFFF","#000080", "#0000FF", "#00FFFF",
+      "#00FF00", "#FFFF00", "#FF8800", "#FF0000"]
+
+  // Get resolution integer boundaries
+  var highRes = Math.ceil(resolution);
+  var lowRes = highRes +1;
+
+  var highResColor = stopColors[highRes];
+  var lowResColor = stopColors[lowRes];
+
+  // get the
+  return getColorBetween(highResColor, lowResColor, resolution-highRes)
+
+};
+
+function getColorBetween(bottomColor, topColor, distanceFromBottom){
+  // Returns the color between the 2 passed color at a certain distance (decimal value)
+  var c = "#";
+  for(var i = 0; i<3; i++) {
+    var subb = bottomColor.substring(1+2*i, 3+2*i);
+    var subt = topColor.substring(1+2*i, 3+2*i);
+    var vb = parseInt(subb, 16);
+    var vt = parseInt(subt, 16);
+    var v = vb + Math.floor((vt - vb) * distanceFromBottom);
+    var sub = v.toString(16).toUpperCase();
+    var padsub = ('0'+sub).slice(-2);
+    c += padsub;
+  }
+  return c
+}
 
 module.exports = add_em_resolution;
