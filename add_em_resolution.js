@@ -15,7 +15,7 @@ const add_em_resolution = function (_n) {
   // url      --> "/compute/biopython/interface/6crv" (pdb varible)
   // response --> complex structure!
   // Try local static data
-  const sData = '{"sequence": "MLPGLALLLLAAWTARALEVPTDGNAGLLAEPQIAMFCGRLNMHMNVQNGKWDS", "features": [ { "category": "MAP_RESOLUTION", "type": "LOCAL_RESOLUTION", "begin": "723", "end": "723", "value": 3.35 },{ "category": "MAP_RESOLUTION", "type": "LOCAL_RESOLUTION", "begin": "725", "end": "725", "value": 4.21 }, { "category": "MAP_RESOLUTION", "type": "LOCAL_RESOLUTION", "description": "primary tissue(s): large intestine", "begin": "727", "end": "727", "value": 3.75 } ]}';
+  const sData = '{"sequence": "MLPGLALLLLAAWTARALEVPTDGNAGLLAEPQIAMFCGRLNMHMNVQNGKWDS", "features": [ { "category": "MAP_RESOLUTION", "type": "LOCAL_RESOLUTION", "begin": "723", "end": "723", "value": 3.35 },{ "category": "MAP_RESOLUTION", "type": "LOCAL_RESOLUTION", "begin": "725", "end": "725", "value": 4.21 }, { "category": "MAP_RESOLUTION", "type": "LOCAL_RESOLUTION", "description": "primary tissue(s): large intestine", "begin": "727", "end": "727", "value": 6.75 } ]}';
   const resData = JSON.parse(sData);
 
   let em_res = null;
@@ -84,14 +84,15 @@ const add_em_resolution = function (_n) {
 function getColorFromResolution(resolution){
   /* Return the color that corresponds to resolution value*/
   let stopColors = ["#FFFFFF", "#000080", "#0000FF", "#00FFFF",
-                    "#00FF00", "#FFFF00", "#FF8800", "#FF0000"];
+                    "#00FF00", "#FFFF00", "#FF8800", "#FF0000",
+                    "#000000"];
 
   // Get resolution integer boundaries
   let highRes = Math.ceil(resolution);
   let lowRes = highRes +1;
 
-  let highResColor = stopColors[highRes];
-  const lowResColor = stopColors[lowRes];
+  const highResColor = stopColors.length < highRes ? stopColors[stopColors.length-1] : stopColors[highRes];
+  const lowResColor = stopColors.length < lowRes ? stopColors[stopColors.length-1] : stopColors[lowRes];
 
   // get the
   return getColorBetween(highResColor, lowResColor, resolution-highRes)
