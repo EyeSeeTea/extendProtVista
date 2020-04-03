@@ -68,7 +68,7 @@ var add_em_resolution = function (_n){
                                                      type:'measure', 
                                                      begin: pos,
                                                      end: pos,
-                                                     score:i[1], 
+                                                     score:resolution,
                                                      internalId:'res_'+n,
                                                      description:'<b style=\"color:grey;\">Local resolution value:</b><br/>'+resolution
         }];
@@ -79,17 +79,5 @@ var add_em_resolution = function (_n){
   }
   return em_res;
 };
-
-function getParameterByName(name, url) {
-    if (!url) {
-      url = window.location.href;
-    }
-    name = name.replace(/[\[\]]/g, "\\$&");
-    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-        results = regex.exec(url);
-    if (!results) return null;
-    if (!results[2]) return '';
-    return decodeURIComponent(results[2].replace(/\+/g, " "));
-}
 
 module.exports = add_em_resolution;
