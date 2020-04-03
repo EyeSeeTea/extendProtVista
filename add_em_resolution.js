@@ -15,7 +15,13 @@ const add_em_resolution = function (_n) {
   // url      --> "/compute/biopython/interface/6crv" (pdb varible)
   // response --> complex structure!
   // Try local static data
-  const sData = '{"sequence": "MLPGLALLLLAAWTARALEVPTDGNAGLLAEPQIAMFCGRLNMHMNVQNGKWDS", "features": [ { "category": "MAP_RESOLUTION", "type": "LOCAL_RESOLUTION", "begin": "723", "end": "723", "value": 3.35 },{ "category": "MAP_RESOLUTION", "type": "LOCAL_RESOLUTION", "begin": "725", "end": "725", "value": 4.21 }, { "category": "MAP_RESOLUTION", "type": "LOCAL_RESOLUTION", "description": "primary tissue(s): large intestine", "begin": "727", "end": "727", "value": 6.75 } ]}';
+  const sData = '{"sequence": "MLPGLALLLLAAWTARALEVPTDGNAGLLAEPQIAMFCGRLNMHMNVQNGKWDS", "features": [ ' +
+    '{ "category": "MAP_RESOLUTION", "type": "LOCAL_RESOLUTION", "begin": "723", "end": "723", "value": 3.35 },' +
+    '{ "category": "MAP_RESOLUTION", "type": "LOCAL_RESOLUTION", "begin": "723", "end": "723", "value": 6.35 },' +
+    '{ "category": "MAP_RESOLUTION", "type": "LOCAL_RESOLUTION", "begin": "700", "end": "700", "value": 10 },' +
+    '{ "category": "MAP_RESOLUTION", "type": "LOCAL_RESOLUTION", "begin": "725", "end": "725", "value": 4.21 }, ' +
+    '{ "category": "MAP_RESOLUTION", "type": "LOCAL_RESOLUTION", "description": "primary tissue(s): large intestine", "begin": "727", "end": "727", "value": 6.75 }' +
+    ' ]}';
   const resData = JSON.parse(sData);
 
   let em_res = null;
