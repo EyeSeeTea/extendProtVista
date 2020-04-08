@@ -12,20 +12,20 @@ var add_em_res = function (data){
   let resolution = 3;
 
   for (let i = 0; i < __alignment.uniprotLength + 1; i++) {
-    let _description = "Em Resolution at position " + i;
-    _description = '<b>' + _description + '</b>';
-
     // fake a gradient
     let sign = Math.round(Math.random());
+
     if (sign == 0) {
       sign = -1
     }
     resolution = resolution + (sign * 0.2);
-
     resolution = Math.max(2, resolution)
-    resolution = Math.min(7, resolution)
 
+    resolution = Math.min(7, resolution)
     const color = getColorFromResolution(resolution);
+
+    let _description = "Resolution (faked/test) " + resolution;
+    _description = '<b>' + _description + '</b>';
 
     const _f = {begin: i, end: i, color: color, description: _description, internalId: 'emres_' + n, type: 'MONORES'};
     resItems.push(_f);
