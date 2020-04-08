@@ -11,10 +11,22 @@ var add_em_res = function (data){
   let resItems = [];
   let resCat = ["EM2_RESOLUTION", resItems];
 
+  let resolution = 3;
+
   fake_data.forEach(function(i){
     let _description = "Em Resolution at position " + 1;
     _description = '<b>' + _description + '</b>';
-    const resolution = (Math.random() * 6) + 1;
+
+    // fake a gradient
+    let sign = Math.floor(Math.random() +1);
+    if (sign == 0) {
+      sign == -1
+    }
+    resolution = resolution + (sign * 0.2);
+
+    resolution = Math.max(2, resolution)
+    resolution = Math.min(7, resolution)
+
     const color = getColorFromResolution(resolution);
 
     const _f = {begin: i, end: i, color: color, description: _description, internalId: 'emres_' + n, type: 'MONORES'};
