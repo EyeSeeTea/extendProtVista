@@ -16,7 +16,7 @@ var add_em_res = function (data){
     _description = '<b>' + _description + '</b>';
 
     // fake a gradient
-    let sign = Math.floor(Math.random() +1);
+    let sign = Math.round(Math.random());
     if (sign == 0) {
       sign == -1
     }
