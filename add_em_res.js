@@ -18,7 +18,7 @@ var add_em_res = function (data){
     // fake a gradient
     let sign = Math.round(Math.random());
     if (sign == 0) {
-      sign == -1
+      sign = -1
     }
     resolution = resolution + (sign * 0.2);
 
