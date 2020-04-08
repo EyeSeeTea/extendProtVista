@@ -4,17 +4,15 @@ var add_em_res = function (data){
   // Adds em resolution. "data" coming from @asyncURL at frames_annotations_controller
   let n = 1;
 
-  // Tests data: Remove when WS ready:
-  const fake_data = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]
-
+  // Tests data: Remove when WS ready: Data should come populated
   // Add EM_RESOLUTION category
   let resItems = [];
   let resCat = ["EM2_RESOLUTION", resItems];
 
   let resolution = 3;
 
-  fake_data.forEach(function(i){
-    let _description = "Em Resolution at position " + 1;
+  for (let i = 0; i < __alignment.uniprotLength + 1; i++) {
+    let _description = "Em Resolution at position " + i;
     _description = '<b>' + _description + '</b>';
 
     // fake a gradient
@@ -32,7 +30,7 @@ var add_em_res = function (data){
     const _f = {begin: i, end: i, color: color, description: _description, internalId: 'emres_' + n, type: 'MONORES'};
     resItems.push(_f);
     n++;
-  });
+  };
 
   data.push(resCat);
 
