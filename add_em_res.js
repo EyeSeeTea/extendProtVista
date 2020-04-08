@@ -9,7 +9,7 @@ var add_em_res = function (data){
 
   // Add EM_RESOLUTION category
   let resItems = [];
-  let resCat = ["EM_RESOLUTION", resItems];
+  let resCat = ["EM2_RESOLUTION", resItems];
 
   fake_data.forEach(function(i){
     let _description = "Em Resolution at position " + 1;
