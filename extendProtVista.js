@@ -13,6 +13,7 @@ var update_diseases = build_variant_menu.update_diseases;
 var add_disease_menu = build_variant_menu.add_disease_menu;
 var add_evidences = require('./add_evidences');
 var add_asa_residues = require('./add_asa_residues');
+var add_em_res = require('./add_em_res');
 var add_binding_residues = require('./add_binding_residues');
 var add_coverage = require('./add_coverage');
 var add_sequence_coverage = require('./add_sequence_coverage');
@@ -34,17 +35,18 @@ var upgrade_fv = function(fv){
 };
 
 var extend_features =  function(features){
-        features_extended = true;
-        if(extend_features_flag){
+  features_extended = true;
+  if(extend_features_flag){
 	  add_evidences(features);
 	  add_iedb(features);
 	  add_coverage(features);
-          add_sequence_coverage(features);
+	  add_sequence_coverage(features);
 	  add_phosphosite(features);
 	  add_dbptm(features);
 	  rebuild_ptm(features);
-          add_uploaded_data(features);
-        }
+    add_uploaded_data(features);
+    add_em_res(features);
+  }
 	add_highlight(features);
 };
 
