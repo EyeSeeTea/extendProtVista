@@ -7,7 +7,7 @@ var add_em_res = function (data){
   // Tests data: Remove when WS ready: Data should come populated
   // Add EM_RESOLUTION category
   let resItems = [];
-  let resCat = ["EM2_RESOLUTION", resItems];
+  let resCat = ["EM_RESOLUTION", resItems];
 
   let resolution = 3;
 
