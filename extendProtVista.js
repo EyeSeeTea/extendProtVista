@@ -14,6 +14,7 @@ var add_disease_menu = build_variant_menu.add_disease_menu;
 var add_evidences = require('./add_evidences');
 var add_asa_residues = require('./add_asa_residues');
 var add_em_res = require('./add_em_res');
+var add_man_cur_ppifuncmap = require('./add_man_cur_ppifuncmap');
 var add_binding_residues = require('./add_binding_residues');
 var add_coverage = require('./add_coverage');
 var add_sequence_coverage = require('./add_sequence_coverage');
@@ -46,6 +47,7 @@ var extend_features =  function(features){
 	  rebuild_ptm(features);
     add_uploaded_data(features);
     add_em_res(features);
+    add_man_cur_ppifuncmap(features);
   }
 	add_highlight(features);
 };
