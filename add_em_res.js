@@ -24,7 +24,7 @@ var add_em_res = function (data){
         annot.description = annotGroup.algorithm +": " + annotGroup.value;
         annot.internalId= 'emvalidation_' + n;
 
-        __lr[1].push(annotGroup);
+        __lr[1].push(annot);
         n++;
 
       })
