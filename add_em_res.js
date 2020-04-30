@@ -14,7 +14,7 @@ var add_em_res = function (data){
       const type = annotGroup.algorithm + " (min:" + annotGroup.minVal + ", max: " + annotGroup.maxVal + ")";
       const isResolution = (annotGroup.algType === "localResolution");
 
-      annotGroup.forEach(function (annot) {
+      annotGroup.data.forEach(function (annot) {
         let color = "red";
         if(isResolution){
           color = getColorFromResolution(Math.round(annot.value*100)/100);
