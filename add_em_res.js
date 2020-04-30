@@ -24,6 +24,9 @@ var add_em_res = function (data){
         annot.description = annotGroup.algorithm +": " + annot.value;
         annot.internalId= 'emvalidation_' + n;
 
+        // Translate alignement
+        annot.end=annot.begin;
+        annot = top.translate_to_uniprot(annot,__alignment.pdb+":"+__alignment.chain)
         __lr[1].push(annot);
         n++;
 
