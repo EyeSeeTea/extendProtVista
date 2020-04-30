@@ -384,6 +384,80 @@ module.exports = add_elmdb;
 },{}],8:[function(require,module,exports){
 "use strict";
 
+var add_em_res = function (data){
+  // Adds em resolution. "data" coming from @asyncURL at frames_annotations_controller
+  let n = 1;
+
+  // Tests data: Remove when WS ready: Data should come populated
+  // Add EM_RESOLUTION category
+  let resItems = [];
+  let resCat = ["EM_RESOLUTION", resItems];
+
+  let resolution = 3;
+
+  for (let i = 0; i < __alignment.uniprotLength + 1; i++) {
+    // fake a gradient
+    let sign = Math.round(Math.random());
+
+    if (sign == 0) {
+      sign = -1
+    }
+    resolution = resolution + (sign * 0.2);
+    resolution = Math.max(2, resolution)
+
+    resolution = Math.min(7, resolution)
+    const color = getColorFromResolution(resolution);
+
+    let _description = "Resolution (faked/test) " + resolution;
+    _description = '<b>' + _description + '</b>';
+
+    const _f = {begin: i, end: i, color: color, description: _description, internalId: 'emres_' + n, type: 'MONORES'};
+    resItems.push(_f);
+    n++;
+  };
+
+  data.push(resCat);
+
+};
+
+function getColorFromResolution(resolution){
+  /* Return the color that corresponds to resolution value*/
+  let stopColors = ["#FFFFFF", "#000080", "#0000FF", "#00FFFF",
+    "#00FF00", "#FFFF00", "#FF8800", "#FF0000",
+    "#000000"];
+
+  // Get resolution integer boundaries
+  let highRes = Math.floor(resolution);
+  let lowRes = highRes +1;
+
+  const highResColor = stopColors.length < highRes ? stopColors[stopColors.length-1] : stopColors[highRes];
+  const lowResColor = stopColors.length < lowRes ? stopColors[stopColors.length-1] : stopColors[lowRes];
+
+  // get the
+  return getColorBetween(highResColor, lowResColor, resolution-highRes)
+
+};
+
+function getColorBetween(bottomColor, topColor, distanceFromBottom){
+  // Returns the color between the 2 passed color at a certain distance (decimal value)
+  let c = "#";
+  for(let i = 0; i<3; i++) {
+    const subb = bottomColor.substring(1 + 2 * i, 3 + 2 * i);
+    const subt = topColor.substring(1 + 2 * i, 3 + 2 * i);
+    const vb = parseInt(subb, 16);
+    const vt = parseInt(subt, 16);
+    const v = vb + Math.floor((vt - vb) * distanceFromBottom);
+    const sub = v.toString(16).toUpperCase();
+    const padsub = ('0' + sub).slice(-2);
+    c += padsub;
+  }
+  return c
+}
+
+module.exports = add_em_res;
+},{}],9:[function(require,module,exports){
+"use strict";
+
 var uniprot_link = {
   'DOMAINS_AND_SITES':'family_and_domains',
   'MOLECULE_PROCESSING':'ptm_processing',
@@ -430,7 +504,7 @@ var add_evidences = function(d){
 
 module.exports = add_evidences;
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 "use strict";
 
 var add_iedb = function(d){
@@ -470,7 +544,7 @@ var add_iedb = function(d){
 module.exports =  add_iedb;
 
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 "use strict";
 
 var add_interpro = function (data){
@@ -505,7 +579,140 @@ var add_interpro = function (data){
 
 module.exports = add_interpro;
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
+"use strict";
+
+var add_man_cur_ligands_diamond = function (data) {
+
+  let resItems = [];
+  let resCat = ["DRUG_SCREENING", resItems];
+  let accession = __alignment.uniprot;
+
+  // chech if we can load annotations for this accession
+  if (__cvData == null) return;
+
+  if (__cvData.forEach) {
+    __cvData.forEach(function (track) {
+      if (track != null)
+        if (track.track_name == "Diamond_drug_screening") {
+          var data = track.data;
+          console.log("->>> DRUG_SCREENING reading .__cvData.track");
+          if (track.data.forEach) {
+            track.data.forEach(function (feat) {
+              // console.log("->>> DRUG_SCREENING reading .__cvData.track.data.feat", feat);
+              resItems.push(feat);
+            });
+          };
+        };
+    });
+  };
+
+  data.push(resCat);
+
+};
+
+module.exports = add_man_cur_ligands_diamond;
+},{}],13:[function(require,module,exports){
+"use strict";
+
+var add_man_cur_ligfuncmap = function (data) {
+
+  let resItems = [];
+  let resCat = ["FUNCTIONAL_MAPPING_LIGANDS", resItems];
+  let accession = __alignment.uniprot;
+
+  // chech if we can load annotations for this accession
+  if (__cvData == null) return;
+
+  if (__cvData.forEach) {
+    __cvData.forEach(function (track) {
+      if (track != null)
+      if (track.track_name == "Functional_mapping_Ligands") {
+        var data = track.data;
+        console.log("->>> FUNCTIONAL_MAPPING_LIGANDS reading .__cvData.track");
+        if (track.data.forEach) {
+          track.data.forEach(function (feat) {
+            // console.log("->>> FUNCTIONAL_MAPPING_LIGANDS reading .__cvData.track.data.feat");
+            resItems.push(feat);
+          });
+        };
+      };
+    });
+  };
+
+  data.push(resCat);
+
+};
+
+module.exports = add_man_cur_ligfuncmap;
+},{}],14:[function(require,module,exports){
+"use strict";
+
+var add_man_cur_ppifuncmap = function (data) {
+
+  let resItems = [];
+  let resCat = ["FUNCTIONAL_MAPPING_PPI", resItems];
+  let accession = __alignment.uniprot;
+
+  // chech if we can load annotations for this accession
+  if (__cvData == null) return;
+
+  if (__cvData.forEach) {
+    __cvData.forEach(function (track) {
+      if (track != null)
+      if (track.track_name == "Functional_mapping_PPI") {
+        var data = track.data;
+        console.log("->>> FUNCTIONAL_MAPPING_PPI reading .__cvData.track");
+        if (track.data.forEach) {
+          track.data.forEach(function (feat) {
+            // console.log("->>> FUNCTIONAL_MAPPING_PPI reading .__cvData.track.data.feat");
+            resItems.push(feat);
+          });
+        };
+      };
+    });
+  };
+
+  data.push(resCat);
+
+};
+
+module.exports = add_man_cur_ppifuncmap;
+},{}],15:[function(require,module,exports){
+"use strict";
+
+var add_man_cur_variants = function (data) {
+
+  let resItems = [];
+  let sourceurl = "https://bigd.big.ac.cn/ncov/variation/annotation";
+  let resCat = ["CNCB_VARIANTS", resItems];
+  let accession = __alignment.uniprot;
+
+  // chech if we can load annotations for this accession
+  if (__cvData == null) return;
+
+  if (__cvData.forEach) {
+    __cvData.forEach(function (track) {
+      if (track != null)
+        if (track.track_name == "Cncb_variants") {
+          var data = track.data;
+          console.log("->>> CNCB_VARIANTS reading .__cvData.track");
+          if (track.data.forEach) {
+            track.data.forEach(function (feat) {
+              // console.log("->>> CNCB_VARIANTS reading .__cvData.track.data.feat", feat);
+              // resItems.push(feat);
+            });
+          };
+        };
+    });
+  };
+
+  data.push(resCat);
+
+};
+
+module.exports = add_man_cur_variants;
+},{}],16:[function(require,module,exports){
 "use strict";
 
 var add_mobi =  function(_data, dom_sites){
@@ -555,7 +762,7 @@ var add_mobi =  function(_data, dom_sites){
 
 module.exports = add_mobi;
 
-},{}],12:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 "use strict";
 var highlight_all = require('./highlight_all');
 var add_highlight_all = highlight_all.add_highlight_all;
@@ -725,7 +932,7 @@ function getParameterByName(name, url) {
 module.exports = add_molprobity;
 
 
-},{"./highlight_all":27}],13:[function(require,module,exports){
+},{"./highlight_all":32}],18:[function(require,module,exports){
 "use strict";
 
 var add_pdb_redo = new function(){
@@ -746,7 +953,7 @@ var add_pdb_redo = new function(){
 
 module.exports = add_pdb_redo;
 
-},{}],14:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 "use strict";
 
 var add_pfam = function(data){
@@ -778,7 +985,7 @@ var add_pfam = function(data){
 
 module.exports = add_pfam;
 
-},{}],15:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 "use strict";
 
 var add_phosphosite = function(d){
@@ -897,7 +1104,7 @@ var add_phosphosite = function(d){
 
 module.exports = add_phosphosite;
 
-},{}],16:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 "use strict";
 var add_asa_residues = require('./add_asa_residues');
 var add_binding_residues = require('./add_binding_residues');
@@ -1055,7 +1262,7 @@ function getParameterByName(name, url) {
 module.exports = add_psa_interface;
 
 
-},{"./add_asa_residues":1,"./add_binding_residues":2,"./add_molprobity":12,"./highlight_all":27}],17:[function(require,module,exports){
+},{"./add_asa_residues":1,"./add_binding_residues":2,"./add_molprobity":17,"./highlight_all":32}],22:[function(require,module,exports){
 "use strict";
 
 var add_sequence_coverage = function(d){
@@ -1072,7 +1279,7 @@ var add_sequence_coverage = function(d){
 
 module.exports = add_sequence_coverage;
 
-},{}],18:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 "use strict";
 
 var add_smart = function(data){
@@ -1099,7 +1306,7 @@ var add_smart = function(data){
 
 module.exports = add_smart;
 
-},{}],19:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 "use strict";
 
 var continuous_data = require("./continuous_data");
@@ -1230,7 +1437,7 @@ var add_uploaded_variants = function(d){
 
 module.exports = { add_uploaded_data:add_uploaded_data, uploaded_data:uploaded_data, add_uploaded_variants:add_uploaded_variants };
 
-},{"./continuous_data":21}],20:[function(require,module,exports){
+},{"./continuous_data":26}],25:[function(require,module,exports){
 "use strict";
 
 var variant_menu = function (){
@@ -1345,7 +1552,7 @@ function filter_by_disease( D ){
 
 module.exports = { variant_menu:variant_menu, update_diseases:update_diseases, add_disease_menu:add_disease_menu };
 
-},{}],21:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 "use strict";
 
 var n = 1;
@@ -1379,7 +1586,7 @@ var continuous_data = function (d){
 
 module.exports = continuous_data;
 
-},{}],22:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 "use strict";
 
 var extend_categories = function(categories){
@@ -1400,7 +1607,7 @@ var extend_categories = function(categories){
 
 module.exports = extend_categories;
 
-},{}],23:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 "use strict";
 var handle_async_data = require('./handle_async_data');
 var add_psa_interface = require('./add_psa_interface');
@@ -1520,7 +1727,7 @@ var get_all_async_soruces = function(){
 
 module.exports = get_all_async_soruces;
 
-},{"./add_psa_interface":16,"./handle_async_data":25}],24:[function(require,module,exports){
+},{"./add_psa_interface":21,"./handle_async_data":30}],29:[function(require,module,exports){
 "use strict";
 
 var listURL;
@@ -1615,7 +1822,7 @@ var get_all_external_soruces = function( ){
 
 module.exports = get_all_external_soruces;
 
-},{}],25:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 "use strict";
 var add_mobi = require('./add_mobi');
 var add_dsysmap = require('./add_dsysmap');
@@ -1741,7 +1948,7 @@ function add_domain_family(data,family){
 
 module.exports = handle_async_data;
 
-},{"./add_dsysmap":6,"./add_elmdb":7,"./add_interpro":10,"./add_mobi":11,"./add_pdb_redo":13,"./add_pfam":14,"./add_smart":18,"./highlight_all":27}],26:[function(require,module,exports){
+},{"./add_dsysmap":6,"./add_elmdb":7,"./add_interpro":11,"./add_mobi":16,"./add_pdb_redo":18,"./add_pfam":19,"./add_smart":23,"./highlight_all":32}],31:[function(require,module,exports){
 "use strict";
 var highlight_all = require('./highlight_all');
 var add_highlight_all = highlight_all.add_highlight_all;
@@ -1856,7 +2063,7 @@ var check_coordinates = function(){
 
 module.exports = {add_highlight:add_highlight, setup_highlight:setup_highlight, check_coordinates:check_coordinates};
 
-},{"./get_all_async_soruces":23,"./highlight_all":27}],27:[function(require,module,exports){
+},{"./get_all_async_soruces":28,"./highlight_all":32}],32:[function(require,module,exports){
 "use strict";
 
 function add_highlight_all(){
@@ -1914,7 +2121,7 @@ function trigger_event(selection){
 
 module.exports = {add_highlight_all:add_highlight_all};
 
-},{}],28:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 "use strict";
 
 var max_zoom = function (fv){
@@ -1924,7 +2131,7 @@ var max_zoom = function (fv){
 module.exports = max_zoom;
 
 
-},{}],29:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 "use strict";
 
 var rebuild_ptm = function(d){
@@ -1967,7 +2174,7 @@ var rebuild_ptm = function(d){
 module.exports = rebuild_ptm;
 
 
-},{}],30:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 "use strict";
 
 var rename_structural_features = function(d){
@@ -1994,6 +2201,11 @@ var update_diseases = build_variant_menu.update_diseases;
 var add_disease_menu = build_variant_menu.add_disease_menu;
 var add_evidences = require('./add_evidences');
 var add_asa_residues = require('./add_asa_residues');
+var add_em_res = require('./add_em_res');
+var add_man_cur_ppifuncmap = require('./add_man_cur_ppifuncmap');
+var add_man_cur_ligfuncmap = require('./add_man_cur_ligfuncmap');
+var add_man_cur_ligands_diamond = require('./add_man_cur_ligands_diamond');
+var add_man_cur_variants = require('./add_man_cur_variants');
 var add_binding_residues = require('./add_binding_residues');
 var add_coverage = require('./add_coverage');
 var add_sequence_coverage = require('./add_sequence_coverage');
@@ -2015,17 +2227,22 @@ var upgrade_fv = function(fv){
 };
 
 var extend_features =  function(features){
-        features_extended = true;
-        if(extend_features_flag){
+  features_extended = true;
+  if(extend_features_flag){
 	  add_evidences(features);
 	  add_iedb(features);
 	  add_coverage(features);
-          add_sequence_coverage(features);
+	  add_sequence_coverage(features);
 	  add_phosphosite(features);
 	  add_dbptm(features);
 	  rebuild_ptm(features);
-          add_uploaded_data(features);
-        }
+    add_uploaded_data(features);
+    add_em_res(features);
+    add_man_cur_ppifuncmap(features);
+    add_man_cur_ligfuncmap(features);
+    add_man_cur_ligands_diamond(features);
+    add_man_cur_variants(features);
+  }
 	add_highlight(features);
 };
 
@@ -2051,4 +2268,4 @@ module.exports = {
 };
 
 
-},{"./add_asa_residues":1,"./add_binding_residues":2,"./add_biomuta":3,"./add_coverage":4,"./add_dbptm":5,"./add_evidences":8,"./add_iedb":9,"./add_phosphosite":15,"./add_sequence_coverage":17,"./add_uploaded_data":19,"./build_variant_menu":20,"./extend_categories":22,"./get_all_external_soruces":24,"./highlight":26,"./max_zoom":28,"./rebuild_ptm":29,"./rename_structural_features":30}]},{},[]);
+},{"./add_asa_residues":1,"./add_binding_residues":2,"./add_biomuta":3,"./add_coverage":4,"./add_dbptm":5,"./add_em_res":8,"./add_evidences":9,"./add_iedb":10,"./add_man_cur_ligands_diamond":12,"./add_man_cur_ligfuncmap":13,"./add_man_cur_ppifuncmap":14,"./add_man_cur_variants":15,"./add_phosphosite":20,"./add_sequence_coverage":22,"./add_uploaded_data":24,"./build_variant_menu":25,"./extend_categories":27,"./get_all_external_soruces":29,"./highlight":31,"./max_zoom":33,"./rebuild_ptm":34,"./rename_structural_features":35}]},{},[]);
