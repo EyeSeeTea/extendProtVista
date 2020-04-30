@@ -14,7 +14,7 @@ var add_man_cur_ligfuncmap = function (data) {
       if (track != null)
       if (track.track_name == "Functional_mapping_Ligands") {
         var data = track.data;
-        console.log("->>> FUNCTIONAL_MAPPING_LIGANDS reading .__cvData.track");
+        // console.log("->>> FUNCTIONAL_MAPPING_LIGANDS reading .__cvData.track");
         if (track.data.forEach) {
           track.data.forEach(function (feat) {
             // console.log("->>> FUNCTIONAL_MAPPING_LIGANDS reading .__cvData.track.data.feat");

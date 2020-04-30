@@ -56,7 +56,7 @@ var extend_features =  function(features){
     add_man_cur_ppifuncmap(features);
     add_man_cur_ligfuncmap(features);
     add_man_cur_ligands_diamond(features);
-    // add_man_cur_variants(features);
+    add_man_cur_variants(features);
   }
 	add_highlight(features);
 };
@@ -65,7 +65,7 @@ var extend_variants = function(features){
 	add_biomuta(features);
   add_uploaded_variants(features);
   add_disease_menu(features);
-  add_man_cur_variants(features);
+  // add_man_cur_variants(features);
 };
 
 module.exports = { 

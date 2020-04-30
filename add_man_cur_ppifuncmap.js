@@ -14,7 +14,7 @@ var add_man_cur_ppifuncmap = function (data) {
       if (track != null)
       if (track.track_name == "Functional_mapping_PPI") {
         var data = track.data;
-        console.log("->>> FUNCTIONAL_MAPPING_PPI reading .__cvData.track");
+        // console.log("->>> FUNCTIONAL_MAPPING_PPI reading .__cvData.track");
         if (track.data.forEach) {
           track.data.forEach(function (feat) {
             // console.log("->>> FUNCTIONAL_MAPPING_PPI reading .__cvData.track.data.feat");

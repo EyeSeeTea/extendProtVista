@@ -10,16 +10,23 @@ var add_man_cur_variants = function (data) {
   // chech if we can load annotations for this accession
   if (__cvData == null) return;
 
+  var bfeat = {};
   if (__cvData.forEach) {
     __cvData.forEach(function (track) {
       if (track != null)
         if (track.track_name == "Cncb_variants") {
           var data = track.data;
-          console.log("->>> CNCB_VARIANTS reading .__cvData.track");
+          // console.log("->>> CNCB_VARIANTS reading .__cvData.track");
           if (track.data.forEach) {
             track.data.forEach(function (feat) {
               // console.log("->>> CNCB_VARIANTS reading .__cvData.track.data.feat", feat);
-              // resItems.push(feat);
+              bfeat = {
+                "begin": feat.begin, "end": feat.end, "color": feat.color,
+                "description": feat.mutationType + " : " + feat.mutationEffect + " @ position: " + feat.genomicPosition + " " + feat.originalGenomic + " > " + feat.newGenomic + "; Prot. change: " + feat.reportedProtChange + feat.wildtype + feat.variation + "; reported cases: " + feat.numberOfViruses,
+                "type": feat.mutationEffect
+              };
+              // console.log("->>> CNCB_VARIANTS writing .__cvData.track.data.bfeat", bfeat);
+              resItems.push(bfeat);
             });
           };
         };
