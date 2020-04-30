@@ -14,7 +14,7 @@ var add_man_cur_ligands_diamond = function (data) {
       if (track != null)
         if (track.track_name == "Diamond_drug_screening") {
           var data = track.data;
-          console.log("->>> DRUG_SCREENING reading .__cvData.track");
+          // console.log("->>> DRUG_SCREENING reading .__cvData.track");
           if (track.data.forEach) {
             track.data.forEach(function (feat) {
               // console.log("->>> DRUG_SCREENING reading .__cvData.track.data.feat", feat);
