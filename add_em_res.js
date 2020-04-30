@@ -4,19 +4,31 @@ var add_em_res = function (data){
   // Adds em resolution. "data" coming from @asyncURL  or @allURL at frames_annotations_controller
   // Coming data should be at __external_data['emlr']
   // It should be like:
-  // {"data":[ { "begin": 10, "value":2.234},...]}
+    // [ {"data":[{"begin": 1, "value":2.234], "algorithm":"monores", "chain":"V", "minVal":2, "maxVal":5, "algType":"localResolution"},...]
   if(__external_data['emlr']){
     let __lr = ["EM_VALIDATION",[]];
     let n = 1;
-    __external_data['emlr'].forEach(function(item){
+    // For each typ os validation data: monores, deepRes, MaxQ,...
+    __external_data['emlr'].forEach(function(annotGroup){
 
-      item.type = "DEEPRES";
-      item.color = getColorFromResolution(Math.round(item.value*100)/100);
-      item.description = "Xmipp deepres value: " + item.value;
-      item.internalId= 'emres_' + n;
+      const type = annotGroup.algorithm + " (min:" + annotGroup.minVal + ", max: " + annotGroup.maxVal + ")";
+      const isResolution = (annotGroup.algType === "localResolution");
 
-      __lr[1].push(item);
-      n++;
+      annotGroup.forEach(function (annot) {
+        let color = "red";
+        if(isResolution){
+          color = getColorFromResolution(Math.round(annot.value*100)/100);
+        }
+        annot.color = color;
+        annot.type = type;
+        annot.description = annotGroup.algorithm +": " + annotGroup.value;
+        annot.internalId= 'emvalidation_' + n;
+
+        __lr[1].push(annotGroup);
+        n++;
+
+      })
+
     });
 
     data.push(__lr);
