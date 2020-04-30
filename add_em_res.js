@@ -1,39 +1,26 @@
 "use strict";
 
 var add_em_res = function (data){
-  // Adds em resolution. "data" coming from @asyncURL at frames_annotations_controller
-  let n = 1;
+  // Adds em resolution. "data" coming from @asyncURL  or @allURL at frames_annotations_controller
+  // Coming data should be at __external_data['emlr']
+  // It should be like:
+  // {"data":[ { "begin": 10, "value":2.234},...]}
+  if(__external_data['emlr']){
+    let __lr = ["EM_VALIDATION",[]];
+    let n = 1;
+    __external_data['emlr'].forEach(function(item){
 
-  // Tests data: Remove when WS ready: Data should come populated
-  // Add EM_RESOLUTION category
-  let resItems = [];
-  let resCat = ["EM_RESOLUTION", resItems];
+      item.type = "DEEPRES";
+      item.color = getColorFromResolution(Math.round(item.value*100)/100);
+      item.description = "Xmipp deepres value: " + item.value;
+      item.internalId= 'emres_' + n;
 
-  let resolution = 3;
+      __lr[1].push(item);
+      n++;
+    });
 
-  for (let i = 0; i < __alignment.uniprotLength + 1; i++) {
-    // fake a gradient
-    let sign = Math.round(Math.random());
-
-    if (sign == 0) {
-      sign = -1
-    }
-    resolution = resolution + (sign * 0.2);
-    resolution = Math.max(2, resolution)
-
-    resolution = Math.min(7, resolution)
-    const color = getColorFromResolution(resolution);
-
-    let _description = "Resolution (faked/test) " + resolution;
-    _description = '<b>' + _description + '</b>';
-
-    const _f = {begin: i, end: i, color: color, description: _description, internalId: 'emres_' + n, type: 'MONORES'};
-    resItems.push(_f);
-    n++;
-  };
-
-  data.push(resCat);
-
+    data.push(__lr);
+  }
 };
 
 function getColorFromResolution(resolution){
