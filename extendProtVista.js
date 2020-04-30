@@ -52,8 +52,8 @@ var extend_features =  function(features){
 
 var extend_variants = function(features){
 	add_biomuta(features);
-        add_uploaded_variants(features);
-        add_disease_menu(features);
+	add_uploaded_variants(features);
+	add_disease_menu(features);
 };
 
 module.exports = { 
