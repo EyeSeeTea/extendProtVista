@@ -12,7 +12,7 @@ var add_em_res = function (data){
     __external_data['emlr'].forEach(function(annotGroup){
 
       const type = annotGroup.algorithm + " (min:" + annotGroup.minVal + ", max: " + annotGroup.maxVal + ")";
-      const isResolution = (annotGroup.algType === "localResolution");
+      const isResolution = (annotGroup.algoType === "localResolution");
 
       annotGroup.data.forEach(function (annot) {
         let color = "red";
@@ -21,7 +21,7 @@ var add_em_res = function (data){
         }
         annot.color = color;
         annot.type = type;
-        annot.description = annotGroup.algorithm +": " + annotGroup.value;
+        annot.description = annotGroup.algorithm +": " + annot.value;
         annot.internalId= 'emvalidation_' + n;
 
         __lr[1].push(annot);
