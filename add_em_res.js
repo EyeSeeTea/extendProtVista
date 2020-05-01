@@ -1,4 +1,7 @@
 "use strict";
+const emResColors = ["#FFFFFF", "#000080", "#0000FF", "#00FFFF",
+  "#00FF00", "#FFFF00", "#FF8800", "#FF0000",
+  "#000000"];
 
 var add_em_res = function (data){
   // Adds em resolution. "data" coming from @asyncURL  or @allURL at frames_annotations_controller
@@ -11,17 +14,22 @@ var add_em_res = function (data){
     // For each typ os validation data: monores, deepRes, MaxQ,...
     __external_data['emlr'].forEach(function(annotGroup){
 
-      const type = annotGroup.algorithm + " (min:" + annotGroup.minVal + ", max: " + annotGroup.maxVal + ")";
+      const type = annotGroup.algorithm + " (" + annotGroup.minVal + " -> " + annotGroup.maxVal + ")";
       const isResolution = (annotGroup.algoType === "localResolution");
 
       annotGroup.data.forEach(function (annot) {
-        let color = "red";
+
         if(isResolution){
-          color = getColorFromResolution(Math.round(annot.value*100)/100);
+          annot.color = getColorFromResolution(Math.round(annot.value*100)/100);
+          annot.description = "Local resolution by " + description;
+          annot.legend = getResolutionLegend;
+        } else {
+          annot.color = getMaxQColor(annot.value);
+          annot.description = annotGroup.algorithm +": " + annot.value;
         }
         annot.color = color;
         annot.type = type;
-        annot.description = annotGroup.algorithm +": " + annot.value;
+        annot.description = description;
         annot.internalId= 'emvalidation_' + n;
 
         // Translate alignement
@@ -38,18 +46,31 @@ var add_em_res = function (data){
   }
 };
 
+function getMaxQColor(maxQValue){
+  /* Return the color that corresponds to a maxQ value. Range: -1 to 1*/
+  // get the
+  return getColorBetween("#FF0000", "#00FF00", maxQValue+1)
+
+};
+
+function getResolutionLegend() {
+  let legend = [];
+  let n = 0;
+  emResColors.forEach(function (color) {
+    legend.push([color, n]);
+    n++;
+  })
+}
+
 function getColorFromResolution(resolution){
   /* Return the color that corresponds to resolution value*/
-  let stopColors = ["#FFFFFF", "#000080", "#0000FF", "#00FFFF",
-    "#00FF00", "#FFFF00", "#FF8800", "#FF0000",
-    "#000000"];
 
   // Get resolution integer boundaries
   let highRes = Math.floor(resolution);
   let lowRes = highRes +1;
 
-  const highResColor = stopColors.length < highRes ? stopColors[stopColors.length-1] : stopColors[highRes];
-  const lowResColor = stopColors.length < lowRes ? stopColors[stopColors.length-1] : stopColors[lowRes];
+  const highResColor = emResColors.length < highRes ? emResColors[emResColors.length-1] : emResColors[highRes];
+  const lowResColor = emResColors.length < lowRes ? emResColors[emResColors.length-1] : emResColors[lowRes];
 
   // get the
   return getColorBetween(highResColor, lowResColor, resolution-highRes)
