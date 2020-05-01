@@ -4,13 +4,12 @@ var add_man_cur_variants = function (data) {
 
   let resItems = [];
   let sourceurl = "https://bigd.big.ac.cn/ncov/variation/annotation";
-  let resCat = ["CNCB_VARIANTS", resItems];
+  let resCat = ["Genomic_Variants", resItems];
   let accession = __alignment.uniprot;
 
   // chech if we can load annotations for this accession
   if (__cvData == null) return;
 
-  var bfeat = {};
   if (__cvData.forEach) {
     __cvData.forEach(function (track) {
       if (track != null)
@@ -19,14 +18,19 @@ var add_man_cur_variants = function (data) {
           // console.log("->>> CNCB_VARIANTS reading .__cvData.track");
           if (track.data.forEach) {
             track.data.forEach(function (feat) {
-              // console.log("->>> CNCB_VARIANTS reading .__cvData.track.data.feat", feat);
-              bfeat = {
-                "begin": feat.begin, "end": feat.end, "color": feat.color,
-                "description": feat.mutationType + " : " + feat.mutationEffect + " @ position: " + feat.genomicPosition + " " + feat.originalGenomic + " > " + feat.newGenomic + "; Prot. change: " + feat.reportedProtChange + feat.wildtype + feat.variation + "; reported cases: " + feat.numberOfViruses,
-                "type": feat.mutationEffect
+              feat.description = feat.mutationType + " : " + feat.mutationEffect + " @ " + feat.genomicPosition
+                + "<br>" + feat.originalGenomic + " " + feat.newGenomic
+                + "<br>" + "Prot. change: " + feat.reportedProtChange
+                + "<br>" + feat.wildtype + " " + feat.variation
+                + "<br>" + "Reported cases: " + feat.numberOfViruses;
+              feat.type = feat.mutationEffect;
+              // console.log("->>> CNCB_VARIANTS writing .__cvData.track.data.feat", feat);
+              if (track.reference) {
+                feat.description = feat.description + '<br><br><b>Data source:</b>'
+                  + '&nbsp;&nbsp;<img src="' + track.fav_icon + '" width="16" height="16">'
+                  + '&nbsp;&nbsp;<a href="' + track.reference + '" target="_blank">' + track.reference + '</a>'
               };
-              // console.log("->>> CNCB_VARIANTS writing .__cvData.track.data.bfeat", bfeat);
-              resItems.push(bfeat);
+              resItems.push(feat);
             });
           };
         };
