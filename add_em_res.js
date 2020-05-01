@@ -57,7 +57,9 @@ function getResolutionLegend() {
   emResColors.forEach(function (color) {
     legend.push([color, n]);
     n++;
-  })
+  });
+
+  return legend;
 }
 
 function getColorFromResolution(resolution){
