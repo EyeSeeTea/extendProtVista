@@ -19,7 +19,6 @@ var add_man_cur_variants = function (data) {
           if (track.data.forEach) {
             track.data.forEach(function (feat) {
               feat.description = feat.mutationType + " : " + feat.mutationEffect + " @ " + feat.genomicPosition
-                + "<br>" + feat.originalGenomic + " " + feat.newGenomic
                 + "<br>" + "Prot. change: " + feat.reportedProtChange
                 + "<br>" + feat.wildtype + " " + feat.variation
                 + "<br>" + "Reported cases: " + feat.numberOfViruses;
@@ -34,6 +33,10 @@ var add_man_cur_variants = function (data) {
                   + icon_link
                   + '&nbsp;&nbsp;<a href="' + track.reference + '" target="_blank">' + track.reference + '</a>'
               };
+
+              // Extend tooltip
+              feat.extentTooltip = customizeVariants;
+
               resItems.push(feat);
             });
           };
@@ -42,6 +45,16 @@ var add_man_cur_variants = function (data) {
   };
 
   data.push(resCat);
+
+};
+
+function customizeVariants(tooltip){
+  let annot = tooltip.data;
+
+  // Add a Genomic info line:
+  let genRow = tooltip.table.append('tr');
+  genRow.append('td').text('Genomic data');
+  genRow.append('td').text(annot.originalGenomic + " muted to " + annot.newGenomic);
 
 };
 
