@@ -42,9 +42,9 @@ function customizeVariants(tooltip) {
   let annot = tooltip.data;
 
   // Add a Genomic data:
-  tooltip.addSimpleRow('Genomic data', + "Position " + feat.genomicPosition + " --> " + annot.originalGenomic + " " + annot.newGenomic);
+  tooltip.addSimpleRow('Genomic data',"Position " + feat.genomicPosition + " --> " + annot.originalGenomic + " " + annot.newGenomic);
   // Protein effect
-  tooltip.addSimpleRow('Protein data', annot.reportedProtChange + " --> " + annot.wildtype + " mutated to " + annot.variation);
+  tooltip.addSimpleRow('Protein data',annot.reportedProtChange + " --> " + annot.wildtype + " mutated to " + annot.variation);
   // Reported cases
   tooltip.addSimpleRow('Reported cases', annot.numberOfViruses);
   // Data source
