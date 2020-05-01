@@ -42,18 +42,28 @@ function customizeVariants(tooltip) {
   // Add a Genomic data:
   tooltip.addSimpleRow('Genomic data', annot.originalGenomic + " muted to " + annot.newGenomic);
   // Protein effect
-  tooltip.addSimpleRow('Protein data', annot.wildtype + " muted to " + annot.variation + "<br/>" + annot.reportedProtChange);
+  tooltip.addSimpleRow('Protein data', annot.wildtype + " muted to " + annot.variation + " :" + annot.reportedProtChange);
   // Reported cases
   tooltip.addSimpleRow('Reported cases', annot.numberOfViruses);
   // Data source
   if (annot.reference) {
+
+    var refRow = tooltip.table.append('tr');
+    refRow.append('td').text('Data source');
     var reference = "";
     var icon = '';
+    var valueTd = refRow.append('td');
     if (annot.refIcon) {
-      icon = '<img src="' + annot.refIcon + '" width="16" height="16">';
+      var icon = valueTd.append("img");
+      icon.src(annot.refIcon);
+      icon.width(16);
+      icon.height(16);
     }
-    reference = icon + '&nbsp;<a href="' + annot.reference + '" target="_blank">' + annot.reference + '</a>';
-    tooltip.addSimpleRow('Data source', reference);
+    var link = valueTd.append("a");
+    link.href(annot.reference);
+    link._target("_blank");
+    link.text(annot.reference);
+
   }
 }
 
