@@ -4,7 +4,7 @@ var add_man_cur_variants = function (data) {
 
   let resItems = [];
   let sourceurl = "https://bigd.big.ac.cn/ncov/variation/annotation";
-  let resCat = ["CNCB_VARIANTS", resItems];
+  let resCat = ["Genomic_Variants", resItems];
   let accession = __alignment.uniprot;
 
   // chech if we can load annotations for this accession
