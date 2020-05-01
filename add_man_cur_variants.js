@@ -35,7 +35,7 @@ var add_man_cur_variants = function (data) {
               };
 
               // Extend tooltip
-              feat.extentTooltip = customizeVariants;
+              feat.extendTooltip = customizeVariants;
 
               resItems.push(feat);
             });
