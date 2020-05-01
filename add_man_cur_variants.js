@@ -26,8 +26,12 @@ var add_man_cur_variants = function (data) {
               feat.type = feat.mutationEffect;
               // console.log("->>> CNCB_VARIANTS writing .__cvData.track.data.feat", feat);
               if (track.reference) {
+                var icon_link = "";
+                if (track.fav_icon) {
+                  var icon_link = '&nbsp;&nbsp;<img src="' + track.fav_icon + '" width="16" height="16">'
+                };
                 feat.description = feat.description + '<br><br><b>Data source:</b>'
-                  + '&nbsp;&nbsp;<img src="' + track.fav_icon + '" width="16" height="16">'
+                  + icon_link
                   + '&nbsp;&nbsp;<a href="' + track.reference + '" target="_blank">' + track.reference + '</a>'
               };
               resItems.push(feat);
