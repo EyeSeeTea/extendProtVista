@@ -14,7 +14,7 @@ var add_man_cur_variants = function (data) {
         if (track.track_name === "Cncb_variants") {
           if (track.data.forEach) {
             track.data.forEach(function (feat) {
-              feat.description = feat.mutationType + " : " + feat.mutationEffect + " @ " + feat.genomicPosition;
+              feat.description = feat.mutationType + " : " + feat.mutationEffect;
               feat.type = feat.mutationEffect;
               if (track.reference) {
                 feat.reference = track.reference;
@@ -22,6 +22,8 @@ var add_man_cur_variants = function (data) {
               if (track.fav_icon) {
                 feat.refIcon = track.fav_icon;
               };
+              // Color based on occurences
+              feat.color = feat.numberOfViruses > 5 ? "red" : "grey";
               // Extend tooltip
               feat.extendTooltip = customizeVariants;
 
@@ -40,9 +42,9 @@ function customizeVariants(tooltip) {
   let annot = tooltip.data;
 
   // Add a Genomic data:
-  tooltip.addSimpleRow('Genomic data', annot.originalGenomic + " muted to " + annot.newGenomic);
+  tooltip.addSimpleRow('Genomic data', + "Position " + feat.genomicPosition + " --> " + annot.originalGenomic + " " + annot.newGenomic);
   // Protein effect
-  tooltip.addSimpleRow('Protein data', annot.wildtype + " muted to " + annot.variation + " :" + annot.reportedProtChange);
+  tooltip.addSimpleRow('Protein data', annot.reportedProtChange + " --> " + annot.wildtype + " mutated to " + annot.variation);
   // Reported cases
   tooltip.addSimpleRow('Reported cases', annot.numberOfViruses);
   // Data source
