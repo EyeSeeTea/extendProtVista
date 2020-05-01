@@ -55,13 +55,13 @@ function customizeVariants(tooltip) {
     var valueTd = refRow.append('td');
     if (annot.refIcon) {
       var icon = valueTd.append("img");
-      icon.src(annot.refIcon);
-      icon.width(16);
-      icon.height(16);
+      icon.attr("src",annot.refIcon);
+      icon.attr("width",16);
+      icon.attr("height",16);
     }
     var link = valueTd.append("a");
-    link.href(annot.reference);
-    link._target("_blank");
+    link.attr("href",annot.reference);
+    link.attr("_target","_blank");
     link.text(annot.reference);
 
   }
