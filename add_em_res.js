@@ -1,7 +1,8 @@
 "use strict";
-const emResColors = ["#FFFFFF", "#000080", "#0000FF", "#00FFFF",
+const emResColors = ["#ff98e9", "#c143ed", "#0000FF", "#00FFFF",
   "#00FF00", "#FFFF00", "#FF8800", "#FF0000",
   "#000000"];
+const emMaxQColor =["#FF0000", "#00FF00"];
 
 var add_em_res = function (data){
   // Adds em resolution. "data" coming from @asyncURL  or @allURL at frames_annotations_controller
@@ -26,6 +27,7 @@ var add_em_res = function (data){
         } else {
           annot.color = getMaxQColor(annot.value);
           annot.description = annotGroup.algorithm +": " + annot.value;
+          annot.legend = getMaxQLegend;
         }
         annot.type = type;
         annot.internalId= 'emvalidation_' + n;
@@ -47,9 +49,21 @@ var add_em_res = function (data){
 function getMaxQColor(maxQValue){
   /* Return the color that corresponds to a maxQ value. Range: -1 to 1*/
   // get the
-  return getColorBetween("#FF0000", "#00FF00", maxQValue+1)
+  // Bellow 0 all red
+  let colorValue = Math.max(maxQValue, 0);
+  return getColorBetween(emMaxQColor[0], emMaxQColor[1], colorValue)
 
 };
+function getMaxQLegend() {
+  let legend = [];
+  let n = 0;
+  emMaxQColor.forEach(function (color) {
+    legend.push([color, n]);
+    n++;
+  });
+
+  return legend;
+}
 
 function getResolutionLegend() {
   let legend = [];
