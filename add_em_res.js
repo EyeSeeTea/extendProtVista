@@ -27,9 +27,7 @@ var add_em_res = function (data){
           annot.color = getMaxQColor(annot.value);
           annot.description = annotGroup.algorithm +": " + annot.value;
         }
-        annot.color = color;
         annot.type = type;
-        annot.description = description;
         annot.internalId= 'emvalidation_' + n;
 
         // Translate alignement
