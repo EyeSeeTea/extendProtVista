@@ -21,7 +21,7 @@ var add_em_res = function (data){
 
         if(isResolution){
           annot.color = getColorFromResolution(Math.round(annot.value*100)/100);
-          annot.description = "Local resolution by " + description;
+          annot.description = "Local resolution by " + annotGroup.algorithm +": " + annot.value;
           annot.legend = getResolutionLegend;
         } else {
           annot.color = getMaxQColor(annot.value);
