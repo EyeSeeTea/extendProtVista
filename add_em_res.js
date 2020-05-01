@@ -1,8 +1,9 @@
 "use strict";
 const emResColors = ["#ff98e9", "#c143ed", "#0000FF", "#00FFFF",
   "#00FF00", "#FFFF00", "#FF8800", "#FF0000",
-  "#000000"];
+  "#c5c5c5"];
 const emMaxQColor =["#FF0000", "#00FF00"];
+const MAXQ_COLOR_UPPPER_THRESHOLD = 0.8;
 
 var add_em_res = function (data){
   // Adds em resolution. "data" coming from @asyncURL  or @allURL at frames_annotations_controller
@@ -51,18 +52,16 @@ function getMaxQColor(maxQValue){
   // get the
   // Bellow 0 all red
   let colorValue = Math.max(maxQValue, 0);
-  return getColorBetween(emMaxQColor[0], emMaxQColor[1], colorValue)
+  // Make 0.8 full green.
+  colorValue = colorValue/MAXQ_COLOR_UPPPER_THRESHOLD;
+  colorValue = Math.min(colorValue, MAXQ_COLOR_UPPPER_THRESHOLD);
+
+  return getColorBetween(emMaxQColor[0], emMaxQColor[1], colorValue);
 
 };
 function getMaxQLegend() {
-  let legend = [];
-  let n = 0;
-  emMaxQColor.forEach(function (color) {
-    legend.push([color, n]);
-    n++;
-  });
 
-  return legend;
+  return [[emMaxQColor[0], 0], [emMaxQColor[1], ">=" + MAXQ_COLOR_UPPPER_THRESHOLD]];
 }
 
 function getResolutionLegend() {
