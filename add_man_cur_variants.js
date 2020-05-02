@@ -3,7 +3,7 @@
 var add_man_cur_variants = function (data) {
 
   let resItems = [];
-  let resCat = ["Genomic_Variants", resItems];
+  let resCat = ["C.N.C.B._Genomic_Variants", resItems];
 
   // check if we can load annotations for this accession
   if (__cvData == null) return;
@@ -11,7 +11,7 @@ var add_man_cur_variants = function (data) {
   if (__cvData.forEach) {
     __cvData.forEach(function (track) {
       if (track != null)
-        if (track.track_name === "Cncb_variants") {
+        if (track.track_name === "Genomic_Variants_CNCB") {
           if (track.data.forEach) {
             track.data.forEach(function (feat) {
               feat.description = feat.mutationType + " : " + feat.mutationEffect;
@@ -63,7 +63,7 @@ function customizeVariants(tooltip) {
     }
     var link = valueTd.append("a");
     link.attr("href",annot.reference);
-    link.attr("_target","_blank");
+    link.attr("target","_blank");
     link.text(annot.reference);
 
   }
