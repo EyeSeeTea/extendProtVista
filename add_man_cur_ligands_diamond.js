@@ -27,6 +27,17 @@ var add_man_cur_ligands_diamond = function (data) {
                   + icon_link
                   + '&nbsp;&nbsp;<a href="' + track.reference + '" target="_blank">' + track.reference + '</a>'
               };
+
+              // Change color if PDB matches the drug
+              if (feat.info){
+                if(feat["PDB_ID"]){
+                  let featPDB = feat["PDB_ID"];
+                  if (featPDB == __alignment.pdb){
+                    feat.color = "red"
+                  };
+                };
+              };
+
               resItems.push(feat);
             });
           };
