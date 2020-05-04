@@ -32,7 +32,7 @@ var add_man_cur_ligands_diamond = function (data) {
               if (feat.info){
                 if(feat["PDB_ID"]){
                   let featPDB = feat["PDB_ID"];
-                  if (featPDB == __alignment.pdb){
+                  if (featPDB === __alignment.pdb){
                     feat.color = "red"
                   };
                 };
