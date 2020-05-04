@@ -30,8 +30,8 @@ var add_man_cur_ligands_diamond = function (data) {
 
               // Change color if PDB matches the drug
               if (feat.info){
-                if(feat["PDB_ID"]){
-                  let featPDB = feat["PDB_ID"];
+                if(feat.info["PDB_ID"]){
+                  let featPDB = feat.info["PDB_ID"];
                   if (featPDB === __alignment.pdb){
                     feat.color = "red"
                   };
