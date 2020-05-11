@@ -82,8 +82,8 @@ function getColorFromResolution(resolution){
   let highRes = Math.floor(resolution);
   let lowRes = highRes +1;
 
-  const highResColor = emResColors.length < highRes ? emResColors[emResColors.length-1] : emResColors[highRes];
-  const lowResColor = emResColors.length < lowRes ? emResColors[emResColors.length-1] : emResColors[lowRes];
+  const highResColor = emResColors.length <= highRes ? emResColors[emResColors.length-1] : emResColors[highRes];
+  const lowResColor = emResColors.length <= lowRes ? emResColors[emResColors.length-1] : emResColors[lowRes];
 
   // get the
   return getColorBetween(highResColor, lowResColor, resolution-highRes)
