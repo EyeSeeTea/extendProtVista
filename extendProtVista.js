@@ -6,9 +6,6 @@ var __add_uploaded_data = require('./add_uploaded_data');
 var add_uploaded_data = __add_uploaded_data.add_uploaded_data;
 var uploaded_data = __add_uploaded_data.uploaded_data;
 var add_uploaded_variants = __add_uploaded_data.add_uploaded_variants;
-
-var add_man_cur_variants = require('./add_man_cur_variants');
-
 var get_all_external_soruces = require('./get_all_external_soruces');
 var build_variant_menu = require('./build_variant_menu');
 var variant_menu = build_variant_menu.variant_menu;
@@ -56,7 +53,6 @@ var extend_features =  function(features){
     add_man_cur_ppifuncmap(features);
     add_man_cur_ligfuncmap(features);
     add_man_cur_ligands_diamond(features);
-    add_man_cur_variants(features);
   }
 	add_highlight(features);
 };
