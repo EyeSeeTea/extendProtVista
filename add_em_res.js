@@ -2,7 +2,7 @@
 const emResColors = ["#ff98e9", "#c143ed", "#0000FF", "#00FFFF",
   "#00FF00", "#FFFF00", "#FF8800", "#FF0000",
   "#c5c5c5"];
-const emMaxQColor =[];
+const emMaxQColor =["#FF0000", "#00FF00"];
 const emFscqColors = ["#FF0000", "#00FF00", "#0000FF"]
 const MAXQ_COLOR_UPPPER_THRESHOLD = 0.8;
 
