@@ -1,7 +1,7 @@
 {
     "name": "ExtendProtVista",
     "description": "Add more functionalities to UniProt-myProtVista",
-    "version": "3.2.0",
+    "version": "3.3.0",
     "homepage": "https://github.com/3dbionotes-community/extendProtVista",
     "repository": {
         "type": "git",
