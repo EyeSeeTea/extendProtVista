@@ -3,7 +3,7 @@
 var add_man_cur_ligands_diamond = function (data) {
 
   let resItems = [];
-  let resCat = ["DRUG_SCREENING", resItems];
+  let resCat = ["PANDDA_DRUG_SCREENING_DIAMOND", resItems];
   let accession = __alignment.uniprot;
 
   // chech if we can load annotations for this accession
