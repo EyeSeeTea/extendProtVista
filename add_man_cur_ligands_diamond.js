@@ -7,6 +7,7 @@ var add_man_cur_ligands_diamond = function (data) {
   let accession = __alignment.uniprot;
 
   // chech if we can load annotations for this accession
+  console.log("->>> DRUG_SCREENING reading .__cvData");
   if (__cvData == null) return;
 
   if (__cvData.forEach) {
