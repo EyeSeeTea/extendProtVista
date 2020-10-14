@@ -72,9 +72,9 @@ function getMaxQLegend() {
 
 function getFscqLegend() {
   let legend = [];
-  legend.push([emFscqColors[0], "-2 or lower (overfitting)"]);
+  legend.push([emFscqColors[0], "-1.5 or lower (overfitting)"]);
   legend.push([emFscqColors[1], " 0 (good fit)"]);
-  legend.push([emFscqColors[2], " 3 or higher (poor fit)"]);
+  legend.push([emFscqColors[2], "+1.5 or higher (poor fit)"]);
 
   return legend;
 }
@@ -82,13 +82,13 @@ function getFscqLegend() {
 function getColorFromFscq(fscq){
   /* Return the color that corresponds to fscq value
   * We want:
-  *  red   --> -3 or bellow.
+  *  red   --> -1.5 or bellow.
   *  green --> 0
-  *  blue  --> +3 or higher*/
+  *  blue  --> +1.5 or higher*/
 
   let lowColor = emFscqColors[1];
   let highColor = emFscqColors[2];
-  let colorValue = Math.min(1, fscq/3);
+  let colorValue = Math.min(1, fscq/1.5);
   if (fscq < 0){
     lowColor = emFscqColors[0];
     highColor = emFscqColors[1];
